@@ -167,11 +167,21 @@ public:
       */
      const std::vector<float> output_copy() const;
 
-
 	/*! Return reference to embdding with background
 	 * Checks if during setupData() any background points were specified and, if so, adds them into a corner in the embedding
 	 */
     const std::vector<float> &outputWithBackground();
+
+    /*! Return embdding with added background points
+     *
+     * This function is useful in cases where you used this class for knn and distance computation and computed an embedding externally.
+     *
+     * Checks if during setupData() any background points were specified and, if so, adds them into a corner in the embedding
+     *
+     * \param emd_without_background embedding without background points
+     * \returns embedding with background points
+    */
+    const std::vector<float> outputWithBackground(std::vector<float> emd_without_background);
 
     /*! Return copy of embdding with background
      * Checks if during setupData() any background points were specified and, if so, adds them into a corner in the embedding

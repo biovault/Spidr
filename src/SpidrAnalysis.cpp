@@ -224,6 +224,23 @@ const std::vector<float>& SpidrAnalysis::outputWithBackground() {
     }
 }
 
+const std::vector<float> SpidrAnalysis::outputWithBackground(std::vector<float> emd_without_background)
+{
+
+    if (_backgroundIDsGlobal.empty())
+    {
+        spdlog::info("No background points specified, returning input embedding.");
+        return emd_without_background;
+    }
+    else
+    {
+        std::vector<float> emb;
+        addBackgroundToEmbedding(emb, emd_without_background);
+        return emb;
+    }
+
+}
+
 const std::vector<float> SpidrAnalysis::outputWithBackground_copy() const {
     const std::vector<float>& emb = _tsne.output();
     std::vector<float> emd_with_backgound;
