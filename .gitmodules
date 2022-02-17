@@ -1,0 +1,20 @@
+[submodule "external/hnswlib"]
+	path = external/hnswlib
+	url = https://github.com/nmslib/hnswlib.git
+	branch = master
+[submodule "external/spdlog"]
+	path = external/spdlog
+	url = https://github.com/gabime/spdlog
+	branch = v1.x
+[submodule "external/glfw"]
+	path = external/glfw
+	url = https://github.com/glfw/glfw/
+	branch = 3.3-stable
+[submodule "python-wrapper/pybind11"]
+	path = python_wrapper/pybind11
+	url = https://github.com/pybind/pybind11
+	branch = stable
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+	branch = 3.4

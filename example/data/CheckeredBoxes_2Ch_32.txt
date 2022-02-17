@@ -1,0 +1,4 @@
+CheckeredBoxes_2Ch_32.bin
+Num dimensions: 2
+Num data points: 1024
+Data type: float 
