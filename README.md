@@ -9,11 +9,11 @@ To clone the repo and its external submodules (hnswlib, glfw, spdlog):
 
 ```git clone --recurse-submodule https://github.com/biovault/Spidr/```
 
-Currently, tested on Windows with Visual Studio 2017. Use cmake for setting up the project:
+Currently, tested on Windows with Visual Studio 2019. Use cmake for setting up the project:
 ```
 mkdir build
 cd build
-cmake .. -G "Visual Studio 15 2017 Win64"
+cmake .. -G "Visual Studio 16 2019" -A x64
 ```
 
 The standard cpp implementation uses the A-tSNE implementation from the [HDILib](https://github.com/biovault/HDILib) and [Hnswlib](https://github.com/nmslib/hnswlib) for approximated nearest neighbor search. Other DR techniques might also be used, as shown in the python example below.
