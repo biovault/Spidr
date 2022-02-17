@@ -1,5 +1,7 @@
 # Spatial Information in Dimensionality Reduction (Spidr)
 
+[![DOI](https://zenodo.org/badge/460389824.svg)](https://zenodo.org/badge/latestdoi/460389824)
+
 Introduces spatial neighborhood information in dimensionality reduction for high-dimensional images. 
 Extends t-SNE such that similarities are based on a point's spatial neighborhood instead of only the high-dimensional point itself.
 
