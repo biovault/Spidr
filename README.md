@@ -7,7 +7,7 @@ Extends t-SNE such that similarities are based on a point's spatial neighborhood
 
 To clone the repo and its external submodules (hnswlib, glfw, spdlog):
 
-```git clone --recurse-submodule https://github.com/alxvth/Spidr/```
+```git clone --recurse-submodule https://github.com/biovault/Spidr/```
 
 Currently, tested on Windows with Visual Studio 2017. Use cmake for setting up the project:
 ```
