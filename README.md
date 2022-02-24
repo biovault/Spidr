@@ -40,7 +40,7 @@ This library implements the methods presented in **Incorporating Texture Informa
   booktitle    = "2022 15th IEEE Pacific Visualization Symposium (PacificVis)",
   year         = "2022",
   keywords     = "Mathematics of computing, Dimensionality reduction,  Human-centered computing, Visualization techniques, Human-centered computing, Visual analytics",
-  url          = "https://arxiv.org/abs/2202.09179https://arxiv.org/abs/2202.09179"
+  url          = "https://arxiv.org/abs/2202.09179"
 }
 
 @software{alexander_vieth_2022_6120880,
