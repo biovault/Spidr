@@ -29,3 +29,29 @@ Not all dependencies are included in this repo (see submodules in `external/`), 
 Make sure to adjust your system variables respectively:
 - [HDILibSlim](https://github.com/alxvth/HDILib-slim) (build and install the library and define the system variable `HDILIBSLIM_ROOT` pointing to the install DIR for cmake to automatically find the library.)
 - OpenMP
+
+## References
+This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), to be published at PacificVis 2022. A preprint is available on arxiv [2202.09179](https://arxiv.org/abs/2202.09179).
+
+```
+@inproceedings { VVLEH22,
+  author       = "Vieth, Alexander and Vilanova, Anna and Lelieveldt, Boudewijn P.F. and Eisemann, Elmar and H\öllt, Thomas",
+  title        = "Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images",
+  booktitle    = "2022 15th IEEE Pacific Visualization Symposium (PacificVis)",
+  year         = "2022",
+  keywords     = "Mathematics of computing, Dimensionality reduction,  Human-centered computing, Visualization techniques, Human-centered computing, Visual analytics",
+  url          = "https://arxiv.org/abs/2202.09179https://arxiv.org/abs/2202.09179"
+}
+
+@software{alexander_vieth_2022_6120880,
+  author       = {Alexander Vieth},
+  title        = {biovault/Spidr: PacificVis 2022},
+  month        = feb,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v0.1},
+  doi          = {10.5281/zenodo.6120880},
+  url          = {https://doi.org/10.5281/zenodo.6120880}
+}
+```
+
