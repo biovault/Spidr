@@ -72,6 +72,43 @@ public:
      * \param perplexity t-sne perplexity, defines number of nearest neighbors: nn = perplexity * 3 +1
      * \param exaggeration iterations with complete exaggeration of the attractive forces
      * \param expDecay iterations required to remove the exaggeration using an exponential decay
+     * \param initial_embedding vector with initial embedding, serialized [point0X, point0Y, point1X, point1Y, ..., pointMX, pointMY]
+     * \param embeddingName name of embedding
+     * \param forceCalcBackgroundFeatures If background IDs are given you can force the computation of features for these data points
+     * \param backgroundIDsGlobal IDs of points which are not used during the t-SNE embedding - but will inform the feature extraction and distance calculation. Backround points are added to the embedding in the lower left corner to keep the embedding length consistent with the number of points in the data
+    */
+    SpidrAnalysis(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
+        const size_t numDimensions, const ImgSize imgSize, const feature_type featType, \
+        const loc_Neigh_Weighting kernelType, const size_t numLocNeighbors, const size_t numHistBins, const float pixelDistanceWeight, \
+        const knn_library aknnAlgType, const distance_metric aknnMetric, \
+        const size_t numIterations, const size_t perplexity, const size_t exaggeration, const size_t expDecay, \
+        const std::vector<float>& initial_embedding, \
+        const std::string embeddingName = "emd", bool forceCalcBackgroundFeatures = false, const std::vector<unsigned int>& backgroundIDsGlobal = std::vector<unsigned int>());
+
+    /*! Setup data and setting for spatially-aware embedding
+     *
+     * For details see SpidrAnalysisParameters.h
+     *
+     * Use as:
+     * SpidrAnalysis spidr(...);
+     * spidr.compute();
+     * const std::vector<float> embedding = spidr.output();
+     *
+     * \param attribute_data high-dimensional data, serialized [point0dim0, point0dim1, ..., point1dim0, point1dim1, ... pointMdimN]
+     * \param pointIDsGlobal number of data points
+     * \param numDimensions number of dimensions
+     * \param imgSize Width and height of image,. width*height = pointIDsGlobal
+     * \param featType Feature (e.g. texture) to be extracted. Check feat_dist in SpidrAnalysisParameters.h for valid combinations with a supported distance metric
+     * \param kernelType Local neighborhood weighting
+     * \param numLocNeighbors Number of spatial Neighbors In Each Direction, thus numLocNeighbors=1 -> 3x3 neighborhood
+     * \param numHistBins Number of histogram bins for histogram features. You might want to use a heuristic for this, see FeatureUtils.h
+     * \param pixelDistanceWeight weight between eucl. feature and pixel distance in distance_metric::METRIC_EUC_sep, i.e. feat_dist::XY_EUCW
+     * \param aknnAlgType exact or approximated knn or full distance matrix
+     * \param aknnMetric Distance metric. Check feat_dist in SpidrAnalysisParameters.h for valid combinations with a supported feature type
+     * \param numIterations number of t-sne gradient descent iterations
+     * \param perplexity t-sne perplexity, defines number of nearest neighbors: nn = perplexity * 3 +1
+     * \param exaggeration iterations with complete exaggeration of the attractive forces
+     * \param expDecay iterations required to remove the exaggeration using an exponential decay
      * \param embeddingName name of embedding
      * \param forceCalcBackgroundFeatures If background IDs are given you can force the computation of features for these data points
      * \param backgroundIDsGlobal IDs of points which are not used during the t-SNE embedding - but will inform the feature extraction and distance calculation. Backround points are added to the embedding in the lower left corner to keep the embedding length consistent with the number of points in the data
@@ -96,7 +133,22 @@ public:
      * \param backgroundIDsGlobal ID of points which are not used during the t-SNE embedding - but will inform the feature extraction and distance calculation
     */
     void setupData(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
-        const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, const std::vector<unsigned int>& backgroundIDsGlobal = std::vector<unsigned int>());
+        const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, \
+        const std::vector<unsigned int>& backgroundIDsGlobal = std::vector<unsigned int>());
+
+    /*! Set the data
+     *
+     * \param attribute_data high-dimensional data, serialized [point0dim0, point0dim1, ..., point1dim0, point1dim1, ... pointndimn]
+     * \param pointIDsGlobal number of data points
+     * \param numDimensions number of dimensions
+     * \param imgSize Width and height of image,. width*height = pointIDsGlobal
+     * \param embeddingName name of embedding
+     * \param initial_embedding vector with initial embedding, serialized [point0X, point0Y, point1X, point1Y, ..., pointMX, pointMY]
+     * \param backgroundIDsGlobal ID of points which are not used during the t-SNE embedding - but will inform the feature extraction and distance calculation
+    */
+    void setupData(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
+        const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, \
+        const std::vector<float>& initial_embedding, const std::vector<unsigned int>& backgroundIDsGlobal = std::vector<unsigned int>());
 
     /*! Set the parameters of the entire Analysis
      * Use the input from e.g a GUI
@@ -292,7 +344,8 @@ private:
     std::vector<unsigned int> _backgroundIDsGlobal;		/*!< ID of points which are not used during the t-SNE embedding - but will inform the feature extraction and distance calculation > */
     std::vector<unsigned int> _foregroundIDsGlobal;		/*!< ID of points which are used during the t-SNE embedding > */
     SpidrParameters _params;							/*!< Container for Spidr parameters like feature_type and distance_metric> */
-    std::vector<float> _emd_with_backgound;
+    std::vector<float> _emd_with_backgound;             /*!< Used in SpidrAnalysis::outputWithBackground to return embedding with background > */
+    std::vector<float> _initial_embedding;               /*!< Initial embedding, default: random > */
 
 	// features and knn
 	Feature _dataFeats;						            /*!< Computed features > */

@@ -202,7 +202,7 @@ public:
         _featureType(feature_type::TEXTURE_HIST_1D), _neighWeighting(loc_Neigh_Weighting::WEIGHT_UNIF), _numNeighborsInEachDirection(0), _numHistBins(0),
         _kernelWidth(0), _neighborhoodSize(0), _numFeatureValsPerPoint(0), _forceCalcBackgroundFeatures(false), _pixelWeight(0.5),
         _aknn_algorithm(knn_library::KNN_HNSW), _aknn_metric(distance_metric::METRIC_QF), _numForegroundPoints(-1),
-		_perplexity(30), _perplexity_multiplier(3), _numIterations(1000), _exaggeration(250), _expDecay(250)
+		_perplexity(30), _perplexity_multiplier(3), _numIterations(1000), _exaggeration(250), _expDecay(250), _has_preset_embedding(false)
 	{
         // The default constructor sets un-useable values - the user has to set them
     }
@@ -235,7 +235,7 @@ public:
 		_numPoints(numPoints), _numDims(numDims), _imgSize(imgSize), _embeddingName(embeddingName),
 		_featureType(featureType), _neighWeighting(neighWeighting), _numHistBins(numHistBins), _pixelWeight(pixelWeight),
 		_aknn_algorithm(aknn_algorithm), _aknn_metric(aknn_metric), _forceCalcBackgroundFeatures(false),
-		_perplexity_multiplier(3), _numIterations(numIterations), _exaggeration(exaggeration), _expDecay(expDecay)
+		_perplexity_multiplier(3), _numIterations(numIterations), _exaggeration(exaggeration), _expDecay(expDecay), _has_preset_embedding(false)
 	{
         set_perplexity(perplexity);  // sets nn based on perplexity
 		_numForegroundPoints = numPoints; // No background, default that all points are in the foreground
@@ -273,7 +273,7 @@ public:
         _numPoints(numPoints), _numDims(numDims), _imgSize(imgSize), _embeddingName(embeddingName), _numForegroundPoints(numForegroundPoints),
         _featureType(featureType), _neighWeighting(neighWeighting), _numHistBins(numHistBins), _pixelWeight(pixelWeight),
         _aknn_algorithm(aknn_algorithm), _aknn_metric(aknn_metric), _forceCalcBackgroundFeatures(forceCalcBackgroundFeatures),
-        _perplexity_multiplier(3), _numIterations(numIterations), _exaggeration(exaggeration), _expDecay(expDecay)
+        _perplexity_multiplier(3), _numIterations(numIterations), _exaggeration(exaggeration), _expDecay(expDecay), _has_preset_embedding(false)
     {
         set_perplexity(perplexity);  // sets nn based on perplexity
         set_numNeighborsInEachDirection(numLocNeighbors);  // sets _kernelWidth and _neighborhoodSize
@@ -359,10 +359,11 @@ public:
 	knn_library         _aknn_algorithm;        /*!< kNN algo type, e.g. exact kNN vs approximated kNN > */
 	distance_metric     _aknn_metric;           /*!< Distance between features/attributes > */
 
-	// embeddings
+	// embedding
     size_t              _numIterations;         /*!< Number of gradient descent iterations> */
     size_t              _exaggeration;          /*!< Number of iterations with complete exaggeration of the attractive forces> */
-    size_t              _expDecay;              /*!< iterations required to remove the exaggeration using an exponential decay> */
+    size_t              _expDecay;              /*!< Number of iterations required to remove the exaggeration using an exponential decay> */
+	bool				_has_preset_embedding;	/*!< Whether an initial embedding is given, default: random>*/
 
 private:
 	size_t              _nn;                    /*!< Number of nearest neighbors, determined by _perplexity*_perplexity_multiplier + 1> */

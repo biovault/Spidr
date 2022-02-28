@@ -19,23 +19,41 @@ SpidrAnalysis::SpidrAnalysis(const std::vector<float>& attribute_data, const std
     const loc_Neigh_Weighting kernelType, const size_t numLocNeighbors, const size_t numHistBins, const float pixelDistanceWeight, \
     const knn_library aknnAlgType, const distance_metric aknnMetric, \
     const size_t numIterations, const size_t perplexity, const size_t exaggeration, const size_t expDecay, \
-    const std::string embeddingName /* = "emd" */, bool forceCalcBackgroundFeatures /* = false */, const std::vector<unsigned int>& backgroundIDsGlobal /* = std::vector<unsigned int>() */) :
+    const std::vector<float>& initial_embedding , const std::string embeddingName /* = "emd" */, \
+    bool forceCalcBackgroundFeatures /* = false */, const std::vector<unsigned int>& backgroundIDsGlobal /* = std::vector<unsigned int>() */) :
     _featExtraction(),
     _distCalc(),
     _tsne()
 {
     // set data
-    setupData(attribute_data, pointIDsGlobal, numDimensions, imgSize, embeddingName, backgroundIDsGlobal);
+    setupData(attribute_data, pointIDsGlobal, numDimensions, imgSize, embeddingName, initial_embedding, backgroundIDsGlobal);
 
     // computation settings
     initializeAnalysisSettings(featType, kernelType, numLocNeighbors, numHistBins, pixelDistanceWeight, aknnAlgType, aknnMetric, numIterations, perplexity, exaggeration, expDecay, forceCalcBackgroundFeatures);
 }
 
-void SpidrAnalysis::setupData(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, const std::vector<unsigned int>& backgroundIDsGlobal) {
+SpidrAnalysis::SpidrAnalysis(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
+    const size_t numDimensions, const ImgSize imgSize, const feature_type featType, \
+    const loc_Neigh_Weighting kernelType, const size_t numLocNeighbors, const size_t numHistBins, const float pixelDistanceWeight, \
+    const knn_library aknnAlgType, const distance_metric aknnMetric, \
+    const size_t numIterations, const size_t perplexity, const size_t exaggeration, const size_t expDecay, \
+    const std::string embeddingName /* = "emd" */, \
+    bool forceCalcBackgroundFeatures /* = false */, const std::vector<unsigned int>& backgroundIDsGlobal /* = std::vector<unsigned int>() */) :
+    SpidrAnalysis(attribute_data, pointIDsGlobal, numDimensions, imgSize, featType, kernelType, numLocNeighbors, numHistBins, pixelDistanceWeight, \
+        aknnAlgType, aknnMetric, numIterations, perplexity, exaggeration, expDecay, std::vector<float>(), embeddingName, forceCalcBackgroundFeatures, backgroundIDsGlobal)
+{
+    // no inital embedding set like in the other constructor
+}
+
+
+void SpidrAnalysis::setupData(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
+    const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, \
+    const std::vector<unsigned int>& backgroundIDsGlobal/* = std::vector<unsigned int>() */) {
 
 	// Set data
     _attribute_data = attribute_data;
     _pointIDsGlobal = pointIDsGlobal;
+
     _backgroundIDsGlobal = backgroundIDsGlobal;
     std::sort(_backgroundIDsGlobal.begin(), _backgroundIDsGlobal.end());
     // IDs that are not background are in the foreground
@@ -55,6 +73,27 @@ void SpidrAnalysis::setupData(const std::vector<float>& attribute_data, const st
         spdlog::info("SpidrAnalysis: Excluding {} background points and respective features", _backgroundIDsGlobal.size());
 
     assert(_params._numForegroundPoints + _backgroundIDsGlobal.size() == _params._numPoints);
+}
+
+void SpidrAnalysis::setupData(const std::vector<float>& attribute_data, const std::vector<unsigned int>& pointIDsGlobal, \
+    const size_t numDimensions, const ImgSize imgSize, const std::string embeddingName, const std::vector<float>& initial_embedding, \
+    const std::vector<unsigned int>& backgroundIDsGlobal/* = std::vector<unsigned int>() */) 
+{
+    // Set data
+    setupData(attribute_data, pointIDsGlobal, numDimensions, imgSize, embeddingName, backgroundIDsGlobal);
+
+    // Set initial embedding
+    if (!initial_embedding.empty())
+    {
+        if (initial_embedding.size() != _params._numForegroundPoints * 2)
+        {
+            spdlog::warn("SpidrWrapper::compute_fit: User-defined initial embedding does not have the same number of (foreground) points. Initial embedding is ignored.");
+            return;
+        }
+
+        _params._has_preset_embedding = true;
+        _initial_embedding = initial_embedding;
+    }
 }
 
 void SpidrAnalysis::initializeAnalysisSettings(const feature_type featType, const loc_Neigh_Weighting kernelWeightType, const size_t numLocNeighbors, const size_t numHistBins, float pixelDistanceWeight, \
@@ -114,8 +153,18 @@ void SpidrAnalysis::computeEmbedding() {
     if (_knn_indices.size() != _knn_distances.size())
         spdlog::error("SpidrAnalysis: knn indices and knn distance do not align");
 
-	_tsne.setup(_knn_indices, _knn_distances, _params);
-	_tsne.compute();
+    if (_params._has_preset_embedding)
+    {
+        spdlog::info("computeEmbedding: _params._has_preset_embedding");
+        _tsne.setup(_knn_indices, _knn_distances, _params, _initial_embedding);
+    }
+    else
+    {
+        spdlog::info("computeEmbedding: _params.NO");
+        _tsne.setup(_knn_indices, _knn_distances, _params);
+    }
+	
+    _tsne.compute();
 }
 
 void SpidrAnalysis::compute() {
