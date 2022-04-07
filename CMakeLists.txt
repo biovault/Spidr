@@ -7,14 +7,10 @@ PROJECT(${SPIDRLIB})
 # find external packages
 find_package(OpenGL REQUIRED)
 find_package(OpenMP REQUIRED)
-if(DEFINED ENV{HDILIBSLIM_ROOT})
-    set(HDILIBSLIM_PATH $ENV{HDILIBSLIM_ROOT} CACHE PATH  "Path to HDILib_slim")
-endif()
+find_package(HDILib COMPONENTS hdiutils hdidata hdidimensionalityreduction PATHS ${HDILIB_ROOT} CONFIG REQUIRED)
 
-find_package(HDILibSlim COMPONENTS hdiutils hdidata hdidimensionalityreduction PATHS ${HDILIBSLIM_PATH} CONFIG REQUIRED)
-
-if(HDILibSlim_FOUND)
-	message(STATUS "HDILibSlim found at ${HDILIBSLIM_PATH} with includes at ${HDILibSlim_INCLUDE_DIR}")	# make sure to manually set HDILIBSLIM_ROOT to the install dir of the HDILibSlim (fork of the HDILib with fewer dependencies)
+if(HDILib_FOUND)
+	message(STATUS "HDILib found at ${HDILIB_ROOT} with includes at ${HDILib_INCLUDE_DIR}")	# make sure to manually set HDILIB_ROOT to the install dir of the HDILib
 endif()
 
 # set souce files of this project
@@ -99,7 +95,7 @@ target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
 target_include_directories(${SPIDRLIB} PUBLIC "external/eigen/")
 
-# Link against the HDILibSlim, https://github.com/alxvth/HDILibSlim/ (a slimmed-down version of https://github.com/biovault/HDILib)
-# make sure to have it built and HDILIBSlim_ROOT set
-target_include_directories(${SPIDRLIB} PUBLIC ${HDILibSlim_INCLUDE_DIR})
-target_link_libraries(${SPIDRLIB} PUBLIC HDISlim::hdidimensionalityreduction HDISlim::hdiutils HDISlim::hdidata OpenMP::OpenMP_CXX ${CMAKE_DL_LIBS}) # no need to link against flann::flann since it is not used in SPIDRLIB
+# Link against the HDILib (https://github.com/biovault/HDILib)
+# make sure to have it built and HDILIB_ROOT set
+target_include_directories(${SPIDRLIB} PUBLIC ${HDILib_INCLUDE_DIR})
+target_link_libraries(${SPIDRLIB} PUBLIC HDI::hdidimensionalityreduction HDI::hdiutils HDI::hdidata OpenMP::OpenMP_CXX ${CMAKE_DL_LIBS}) # no need to link against flann::flann since it is not used in SPIDRLIB
