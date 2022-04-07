@@ -36,7 +36,7 @@ PYBIND11_MODULE(spidr, m) {
 	// MAIN WRAPPER: here SpidrWrapper, on python side SpidrAnalysis
 	py::class_<SpidrWrapper> spidrAnalysis(m, "SpidrAnalysis");
 
-	spidrAnalysis.def(py::init<feat_dist, loc_Neigh_Weighting, size_t, size_t, float, knn_library, size_t, size_t, size_t, size_t, bool>(), "Init SpidrLib",
+	spidrAnalysis.def(py::init<feat_dist, loc_Neigh_Weighting, size_t, size_t, float, knn_library, size_t, size_t, size_t, size_t, bool, py::array_t<float, py::array::c_style | py::array::forcecast>>(), "Init SpidrLib",
 		py::arg("distMetric") = feat_dist::PC_CHA,
 		py::arg("kernelType") = loc_Neigh_Weighting::WEIGHT_UNIF,
 		py::arg("numLocNeighbors") = 0,
@@ -47,7 +47,8 @@ PYBIND11_MODULE(spidr, m) {
 		py::arg("perplexity") = 30,
 		py::arg("exaggeration") = 250,
 		py::arg("expDecay") = 70,
-		py::arg("forceCalcBackgroundFeatures") = false);
+		py::arg("forceCalcBackgroundFeatures") = false, 
+		py::arg("initial_embedding") = py::none());
 
 
 	spidrAnalysis.def("fit", &SpidrWrapper::fit, "Compute kNN dists and indices and return them",

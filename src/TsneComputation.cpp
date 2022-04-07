@@ -15,20 +15,21 @@
 #endif
 
 TsneComputation::TsneComputation() :
-_iterations(1000),
-_numTrees(4),
-_numChecks(1024),
-_exaggerationIter(250),
-_exponentialDecay(250),
-_perplexity(30), 
-_perplexity_multiplier(3),
-_numDimensionsOutput(2),
-_verbose(false),
-_isGradientDescentRunning(false),
-_isTsneRunning(false),
-_isMarkedForDeletion(false),
-_continueFromIteration(0),
-_numForegroundPoints(0),
+    _iterations(1000),
+    _numTrees(4),
+    _numChecks(1024),
+    _exaggerationIter(250),
+    _exponentialDecay(250),
+    _perplexity(30),
+    _perplexity_multiplier(3),
+    _numDimensionsOutput(2),
+    _verbose(false),
+    _isGradientDescentRunning(false),
+    _isTsneRunning(false),
+    _isMarkedForDeletion(false),
+    _continueFromIteration(0),
+    _numForegroundPoints(0),
+    _has_inital_emb(false),
 _offscreen_context(nullptr)
 {
     _nn = static_cast<int> (_perplexity * _perplexity_multiplier + 1);
@@ -42,7 +43,7 @@ void TsneComputation::computeGradientDescent()
     embed();
 }
 
-void TsneComputation::setup(const std::vector<int> knn_indices, const std::vector<float> knn_distances, const SpidrParameters params) {
+void TsneComputation::setup(const std::vector<int> knn_indices, const std::vector<float> knn_distances, const SpidrParameters params, std::vector<float> initial_embedding /* = std::vector<float>() */) {
     // SpidrParameters
     _iterations = params._numIterations;
     _perplexity = static_cast<float> (params.get_perplexity());
@@ -59,6 +60,17 @@ void TsneComputation::setup(const std::vector<int> knn_indices, const std::vecto
 	spdlog::info("t-SNE computation: Num data points: {0} with {1} precalculated nearest neighbors. Perplexity: {2}, Iterations: {3}", _numForegroundPoints, params.get_nn(), _perplexity, _iterations);
 
     assert(_knn_indices.size() == _numForegroundPoints * _nn);
+
+    // Set user-given initial embedding
+    if (!initial_embedding.empty())
+    {
+        assert(params._has_preset_embedding);
+        spdlog::info("TsneComputation::setup: Use user-provided initial embedding");
+
+        _embedding = hdi::data::Embedding<float>(2, _numForegroundPoints);
+        _embedding.getContainer() = initial_embedding;
+        _has_inital_emb = params._has_preset_embedding;
+    }
 }
 
 
@@ -105,6 +117,7 @@ void TsneComputation::initGradientDescent()
     tsneParams._remove_exaggeration_iter = _exaggerationIter;
     tsneParams._exponential_decay_iter = _exponentialDecay;
     tsneParams._exaggeration_factor = 4 + _numForegroundPoints / 60000.0;
+    tsneParams._presetEmbedding = _has_inital_emb;
 
     // Create a offscreen window
 	if (!glfwInit()) {

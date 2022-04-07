@@ -25,9 +25,9 @@ See `example/SpidrExample.cpp` for a example on how to use the library in cpp.
 See `python_wrapper` for install intructions and a usage example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings.
 
 ## Dependencies
-Not all dependencies are included in this repo (see submodules in `external/`), some need to be downloaded/installed by yourself. 
+Not all dependencies are included in this repo (see submodules in `external/`), some need to be downloaded/installed. 
 Make sure to adjust your system variables respectively:
-- [HDILibSlim](https://github.com/alxvth/HDILib-slim) (build and install the library and define the system variable `HDILIBSLIM_ROOT` pointing to the install DIR for cmake to automatically find the library.)
+- [HDILib](https://github.com/biovault/HDILib) (by default, cmake will download a pre-built version of this library. You can also set the smake variable `USE_ARTIFACTORY_LIBS` to FALSE and define hand cmake the path HDILIB_ROOT, FLANN_ROOT and LZ4_ROOT. See the HDILib documentation for more detail.)
 - OpenMP
 
 ## References

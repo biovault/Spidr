@@ -23,7 +23,8 @@ public:
 		size_t perplexity = 30,
 		size_t exaggeration = 250,
 		size_t expDecay = 70,
-		bool forceCalcBackgroundFeatures = false);
+		bool forceCalcBackgroundFeatures = false,
+		py::array_t<float, py::array::c_style | py::array::forcecast> initial_embedding = py::array_t<float, py::array::c_style | py::array::forcecast>());
 
 	// compute knn dists and ids (and as part of that also the features), does not return knn
 	void compute_fit(
@@ -82,6 +83,10 @@ private:
 	size_t _exaggeration;
 	size_t _expDecay;
 	bool _forceCalcBackgroundFeatures;
+
+	std::vector<float> _initial_embedding;
+	bool _has_preset_embedding;
+	size_t _num_data_points_initial_embedding;
 
 	size_t _numDims;
 	py::ssize_t _numPoints;

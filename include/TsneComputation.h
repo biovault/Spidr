@@ -37,8 +37,9 @@ public:
      * \param knn_indices knn indices, global IDs
      * \param knn_distances knn distances
      * \param params spidr parameters
+     * \param initial_embedding vector with initial embedding, serialized [point0X, point0Y, point1X, point1Y, ..., pointMX, pointMY]
      */
-    void setup(const std::vector<int> knn_indices, const std::vector<float> knn_distances, const SpidrParameters params);
+    void setup(const std::vector<int> knn_indices, const std::vector<float> knn_distances, const SpidrParameters params, std::vector<float> initial_embedding = std::vector<float>());
 
     /*! Computes t-SNE embedding based on knn indices and distances
      */
@@ -122,6 +123,7 @@ private:
     int _perplexity_multiplier;                 /*!< 3. Multiplied by the perplexity gives the number of nearest neighbors used> */
     int _numDimensionsOutput;                   /*!< 2. > */
     int _nn;                                    /*!< number of nearest neighbors> */
+    bool _has_inital_emb;                       /*!< Whether the user set an initial embedding> */
 
     // Flags
     bool _verbose;                              /*!< Controls number of print statements of HDIlib> */

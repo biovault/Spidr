@@ -4,3 +4,8 @@ python-wrapper/build/
 python_wrapper/SpidrWrapper.egg-info/
 **/__pycache__
 **/.idea
+HDILib.tgz
+aql_out.txt
+flann.tgz
+lz4_Debug.tgz
+lz4_Release.tgz
