@@ -1,0 +1,13 @@
+items.find(
+	{
+		"repo":{"$eq" : "conan-local"},
+		"name":{"$eq" : "conaninfo.txt"},
+		"@conan.package.name": {"$eq" : "@package_name@"},
+		"@conan.package.version": {"$eq" : "@package_version@"},
+		"@conan.settings.os": {"$eq" : "@os_name@"},
+		"@conan.settings.compiler": {"$eq" : "@compiler_name@"},
+		"@conan.settings.compiler.version": {"$match" : "@compiler_version@*"},
+		@build_runtime_type@,
+		"@conan.options.shared":{"$eq" : "@option_shared@"}
+	}
+)
