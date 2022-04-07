@@ -13,13 +13,18 @@ SpidrWrapper::SpidrWrapper(feat_dist featDist,
 	size_t perplexity,
 	size_t exaggeration,
 	size_t expDecay,
-	bool forceCalcBackgroundFeatures
+	bool forceCalcBackgroundFeatures,
+	py::array_t<float, py::array::c_style | py::array::forcecast> initial_embedding
 ) : _kernelType(kernelType), _numHistBins(numHistBins), _pixelWeight(pixelWeight), _aknnAlgType(aknnAlgType), _featDist(featDist), _numIterations(numIterations), _numLocNeighbors(numLocNeighbors),
-    _perplexity(perplexity), _exaggeration(exaggeration), _expDecay(expDecay), _forceCalcBackgroundFeatures(forceCalcBackgroundFeatures), _fitted(false), _transformed(false),
+    _perplexity(perplexity), _exaggeration(exaggeration), _expDecay(expDecay), _forceCalcBackgroundFeatures(forceCalcBackgroundFeatures), _fitted(false), _transformed(false), _has_preset_embedding(false), 
 	_numDims(0), _numPoints(0) /* _numDims and _numPoints are set later and derived from the data*/
 {
+	
 	if (_numLocNeighbors <= 0)
-		throw std::runtime_error("SpidrWrapper::Constructor: Spatial Neighbors must be larger 0");
+	{
+		spdlog::error("SpidrWrapper::Constructor: Spatial Neighbors must be larger 0");
+		return;
+	}
 
 	// set _featType and _distMetric based on _feat_dist (not all feat_dist are exposed in the python wrapper, see SpiderBind.cpp)
 	std::tie(_featType, _distMetric) = get_feat_and_dist(_featDist);
@@ -43,6 +48,17 @@ SpidrWrapper::SpidrWrapper(feat_dist featDist,
 
 	_SpidrAnalysis = std::make_unique<SpidrAnalysis>();
 	_nn = _perplexity * 3 + 1;  // _perplexity_multiplier = 3
+	
+	// initial embedding given?
+	if (initial_embedding.size() > 1)
+	{
+		_has_preset_embedding = true;
+		_num_data_points_initial_embedding = initial_embedding.size() / 2;
+
+		// copy initial embedding
+		_initial_embedding.resize(initial_embedding.size());
+		std::memcpy(_initial_embedding.data(), initial_embedding.data(), initial_embedding.size() * sizeof(float));
+	}
 }
 
 
@@ -67,16 +83,29 @@ void SpidrWrapper::compute_fit(
 	_numPoints = X.shape()[0];
 	_imgSize = ImgSize(imgWidth, imgHight);
 
-	// Pass data to SpidrLib
+	// Background data?
+	std::vector<unsigned int> IDsBack;
 	if (!backgroundIDsGlobal.has_value())
-		_SpidrAnalysis->setupData(dat, IDs, _numDims, _imgSize, "SpidrWrapper");
+	{
+		// no background
+		IDsBack = std::vector<unsigned int>();
+	}
 	else
 	{
-		std::vector<unsigned int> IDsBack(backgroundIDsGlobal->size());
+		IDsBack.reserve(backgroundIDsGlobal->size());
 		std::memcpy(IDsBack.data(), backgroundIDsGlobal->data(), backgroundIDsGlobal->size() * sizeof(unsigned int));
-		_SpidrAnalysis->setupData(dat, IDs, _numDims, _imgSize, "SpidrWrapper", IDsBack);
 	}
 
+	// Pass data to SpidrLib
+	if (_has_preset_embedding)
+	{
+		_SpidrAnalysis->setupData(dat, IDs, _numDims, _imgSize, "SpidrWrapper", _initial_embedding, IDsBack);
+	}
+	else
+	{
+		_SpidrAnalysis->setupData(dat, IDs, _numDims, _imgSize, "SpidrWrapper", IDsBack);
+	}
+	
 	// Init all settings (setupData must have been called before initing the settings.)
 	_SpidrAnalysis->initializeAnalysisSettings(_featType, _kernelType, _numLocNeighbors, _numHistBins, _pixelWeight, _aknnAlgType, _distMetric, _numIterations, _perplexity, _exaggeration, _expDecay, _forceCalcBackgroundFeatures);
 
