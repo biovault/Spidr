@@ -20,14 +20,13 @@ The standard cpp implementation uses the A-tSNE implementation from the [HDILib]
 
 ## Usage
 
-See `example/SpidrExample.cpp` for a example on how to use the library in cpp.
+See `example/SpidrExample.cpp` for an example on how to use the library in cpp.
 
-See `python_wrapper` for install intructions and a usage example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings.
+See `python_wrapper` for install intructions and an example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings.
 
 ## Dependencies
-Not all dependencies are included in this repo (see submodules in `external/`), some need to be downloaded/installed. 
-Make sure to adjust your system variables respectively:
-- [HDILib](https://github.com/biovault/HDILib) (by default, cmake will download a pre-built version of this library. You can also set the smake variable `USE_ARTIFACTORY_LIBS` to FALSE and define hand cmake the path HDILIB_ROOT, FLANN_ROOT and LZ4_ROOT. See the HDILib documentation for more detail.)
+Not all dependencies are included in this repo (see submodules in `external/`): 
+- [HDILib](https://github.com/biovault/HDILib) (by default, cmake will download a pre-built version of this library. You can also set the cmake variable `USE_ARTIFACTORY_LIBS` to FALSE and define the path variables HDILIB_ROOT, FLANN_ROOT and LZ4_ROOT by hand. See the HDILib documentation for more detail on the HDILib and it's dependencies.)
 - OpenMP
 
 ## References
