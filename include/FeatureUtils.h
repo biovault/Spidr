@@ -98,7 +98,7 @@ std::vector<float> getNeighborhoodValues(const std::vector<int>& neighborIDs, co
  * \return vector with [min_Ch0, max_Ch0, min_Ch1, max_Ch1, ...]
  */
 template<typename T>
-std::vector<float> CalcMinMaxPerChannel(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data) {
+std::vector<float> CalcMinMaxPerChannel(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data, const std::vector<unsigned int>& globalPointIDs) {
     std::vector<float> minMaxVals(2 * numDims, 0);
 
     // for each dimension iterate over all values
@@ -109,8 +109,8 @@ std::vector<float> CalcMinMaxPerChannel(size_t numPoints, size_t numDims, const 
         minMaxVals[2 * dimCount] = currentVal;
         minMaxVals[2 * dimCount + 1] = currentVal;
 
-        for (unsigned int pointCount = 0; pointCount < numPoints; pointCount++) {
-            currentVal = attribute_data[pointCount * numDims + dimCount];
+        for(auto& pointID: globalPointIDs) {
+            currentVal = attribute_data[pointID * numDims + dimCount];
             // min
             if (currentVal < minMaxVals[2 * dimCount])
                 minMaxVals[2 * dimCount] = currentVal;
@@ -131,14 +131,14 @@ std::vector<float> CalcMinMaxPerChannel(size_t numPoints, size_t numDims, const 
  * \return vector with [mean_Ch0, mean_Ch1, ...]
  */
 template<typename T>
-std::vector<float> CalcMeanPerChannel(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data) {
+std::vector<float> CalcMeanPerChannel(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data, const std::vector<unsigned int>& globalPointIDs) {
     std::vector<float> meanVals(numDims, 0);
 
 #pragma omp parallel for 
     for (int dimCount = 0; dimCount < (int)numDims; dimCount++) {
         float sum = 0;
-        for (unsigned int pointCount = 0; pointCount < numPoints; pointCount++) {
-            sum += attribute_data[pointCount * numDims + dimCount];
+        for (auto& pointID : globalPointIDs) {
+            sum += attribute_data[pointID * numDims + dimCount];
         }
 
         meanVals[dimCount] = sum / numPoints;
@@ -156,15 +156,15 @@ std::vector<float> CalcMeanPerChannel(size_t numPoints, size_t numDims, const st
  * \return vector with [var_Ch0, var_Ch1, ...]
  */
 template<typename T>
-std::vector<float> CalcVarEstimate(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data, const std::vector<float> &meanVals) {
+std::vector<float> CalcVarEstimate(size_t numPoints, size_t numDims, const std::vector<T>& attribute_data, const std::vector<float> &meanVals, const std::vector<unsigned int>& globalPointIDs) {
     std::vector<float> varVals(numDims, 0);
 
 #pragma omp parallel for 
     for (int dimCount = 0; dimCount < (int)numDims; dimCount++) {
         float sum = 0;
         float temp_diff = 0;
-        for (unsigned int pointCount = 0; pointCount < numPoints; pointCount++) {
-            temp_diff = attribute_data[pointCount * numDims + dimCount] - meanVals[dimCount];
+        for (auto& pointID : globalPointIDs) {
+            temp_diff = attribute_data[pointID * numDims + dimCount] - meanVals[dimCount];
             sum += (temp_diff * temp_diff);
         }
 

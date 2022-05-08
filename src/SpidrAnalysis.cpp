@@ -52,7 +52,7 @@ void SpidrAnalysis::setupData(const std::vector<float>& attribute_data, const st
 
 	// Set data
     _attribute_data = attribute_data;
-    _pointIDsGlobal = pointIDsGlobal;
+    _pointIDsGlobal = pointIDsGlobal;   // TODO: change API and use std::vector<unsigned int> pointIDsGlobal(numPoints); std::iota(pointIDsGlobal.begin(), pointIDsGlobal.end(), 0);
 
     _backgroundIDsGlobal = backgroundIDsGlobal;
     std::sort(_backgroundIDsGlobal.begin(), _backgroundIDsGlobal.end());
