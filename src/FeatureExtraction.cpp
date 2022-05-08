@@ -140,16 +140,16 @@ void FeatureExtraction::initExtraction() {
     // calculate other help values specific to feature type
     if (_featType == feature_type::TEXTURE_HIST_1D) {
         // find min and max for each channel, resize the output larger due to vector features
-		_minMaxVals = CalcMinMaxPerChannel(_numPoints, _numDims, _attribute_data);
+		_minMaxVals = CalcMinMaxPerChannel(_numPoints, _numDims, _attribute_data, _pointIDsGlobal);
 	}
     else if ((_featType == feature_type::LOCALMORANSI) | (_featType == feature_type::LOCALGEARYC)) {
         // find mean and varaince for each channel
-        _meanVals = CalcMeanPerChannel(_numPoints, _numDims, _attribute_data);
-		_varVals = CalcVarEstimate(_numPoints, _numDims, _attribute_data, _meanVals);
+        _meanVals = CalcMeanPerChannel(_numPoints, _numDims, _attribute_data, _pointIDsGlobal);
+		_varVals = CalcVarEstimate(_numPoints, _numDims, _attribute_data, _meanVals, _pointIDsGlobal);
 	}
     else if (_featType == feature_type::PIXEL_LOCATION_RANGENORM) {
         // find min and max for each channel, resize the output larger due to vector features
-        _minMaxVals = CalcMinMaxPerChannel(_numPoints, _numDims, _attribute_data);
+        _minMaxVals = CalcMinMaxPerChannel(_numPoints, _numDims, _attribute_data, _pointIDsGlobal);
 
         std::vector<float> minVals;
         std::vector<float> maxVals;
