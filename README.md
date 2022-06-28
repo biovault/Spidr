@@ -30,16 +30,18 @@ Not all dependencies are included in this repo (see submodules in `external/`):
 - OpenMP
 
 ## References
-This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), to be published at PacificVis 2022. A preprint is available on arxiv [2202.09179](https://arxiv.org/abs/2202.09179).
+This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), published at PacificVis 2022. A preprint is available on arXiv [2202.09179](https://arxiv.org/abs/2202.09179), the conference talk recording and other supplemental material are available [here](http://graphics.tudelft.nl/Publications-new/2022/VVLEH22/).
 
 ```
-@inproceedings { VVLEH22,
+@InProceedings { VVLEH22,
   author       = "Vieth, Alexander and Vilanova, Anna and Lelieveldt, Boudewijn P.F. and Eisemann, Elmar and H\öllt, Thomas",
   title        = "Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images",
   booktitle    = "2022 15th IEEE Pacific Visualization Symposium (PacificVis)",
+  pages        = "11-20",
   year         = "2022",
+  doi          = "10.1109/PacificVis53943.2022.00010",
   keywords     = "Mathematics of computing, Dimensionality reduction,  Human-centered computing, Visualization techniques, Human-centered computing, Visual analytics",
-  url          = "https://arxiv.org/abs/2202.09179"
+  url          = "http://graphics.tudelft.nl/Publications-new/2022/VVLEH22"
 }
 
 @software{alexander_vieth_2022_6120880,
