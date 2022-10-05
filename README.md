@@ -30,7 +30,7 @@ Not all dependencies are included in this repo (see submodules in `external/`):
 - OpenMP
 
 ## References
-This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), published at PacificVis 2022. A preprint is available on arXiv [2202.09179](https://arxiv.org/abs/2202.09179), the conference talk recording and other supplemental material are available [here](http://graphics.tudelft.nl/Publications-new/2022/VVLEH22/).
+This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), published at [PacificVis 2022](https://doi.org/10.1109/PacificVis53943.2022.00010). A preprint is available on arXiv [2202.09179](https://arxiv.org/abs/2202.09179), the conference talk recording and other supplemental material are available [here](http://graphics.tudelft.nl/Publications-new/2022/VVLEH22/).
 
 ```
 @InProceedings { VVLEH22,
