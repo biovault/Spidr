@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.21.0)
 
 option(BUILD_HDILIB "Build the HDILib from submodule - otherwise provide the variable HDILIB_ROOT" ON)
+option(CREATE_EXAMPLE "Creates an example executable using the Spidr library" ON)
+option(CREATE_PYTHON_WRAPPER "Creates a python wrapper of the Spidr library" ON)
 
 # setup vcpkg cmake toolchain
 set(VCPKG_LIBRARY_LINKAGE static)
@@ -31,23 +33,19 @@ set(flann_INCLUDE_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include")
 
 if(BUILD_HDILIB)
 	message(STATUS "Build HDILib from submodule")	
-	set(INSTALL_PREBUILT_DEPENDENCIES ON)
 	
 	# use the HDILib submodule
+	set(INSTALL_PREBUILT_DEPENDENCIES ON)
 	set(HDILib_Sub "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILib")
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/HDILib" ${CMAKE_CURRENT_BINARY_DIR}/HDILib)
 	
 	# manage some HDILib things for hdidimensionalityreduction hdiutils hdidata
 	target_include_directories(hdiutils PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
     $<INSTALL_INTERFACE:>)
-	
 	target_include_directories(hdidata PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
     $<INSTALL_INTERFACE:>)
-
 	target_include_directories(hdidimensionalityreduction PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
     $<INSTALL_INTERFACE:>)
-
-	set(HDILib_FOUND TRUE)
 
 else()
 	message(STATUS "Using prebuilt external HDILib")	
@@ -103,23 +101,22 @@ add_library(${SPIDRLIB} STATIC ${SOURCES})
 # Target properties
 # -----------------------------------------------------------------------------
 # Request C++17
-target_compile_features(${SPIDRLIB} PRIVATE cxx_std_17)
+target_compile_features(${SPIDRLIB} PUBLIC cxx_std_17)
 
 if (MSVC)
     target_compile_options(${SPIDRLIB} PUBLIC /bigobj)
 endif()
 
 # Hardware accelations: SSE and AVX
+target_compile_definitions(${SPIDRLIB} PUBLIC -DUSE_SSE)
 set(USE_AVX OFF CACHE BOOL "Don't use AVX by default to support old hardware" )
 if(${USE_AVX})
-	add_definitions(-DUSE_AVX)
+	target_compile_definitions(${SPIDRLIB} PUBLIC -DUSE_AVX)
 	if( MSVC )
-		ADD_DEFINITIONS(/arch:AVX)
+		target_compile_definitions(${SPIDRLIB} PUBLIC /arch:AVX)
 	endif()
 	message(STATUS "Using AVX instruction set extensions")
 endif()
-
-add_definitions(-DUSE_SSE)
 
 if( MSVC )
     SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup" )
@@ -133,7 +130,7 @@ set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
 
 # Prevent glfw including the OpenGL headers
 # On Windows and Linux these come from glad in the HDILib
-add_definitions(-DGLFW_INCLUDE_NONE)
+target_compile_definitions(${SPIDRLIB} PUBLIC -DGLFW_INCLUDE_NONE)
 
 # -----------------------------------------------------------------------------
 # Target include directories
@@ -160,3 +157,38 @@ target_link_libraries(${SPIDRLIB} PUBLIC hdidimensionalityreduction hdiutils hdi
 if(BUILD_HDILIB)
 	add_dependencies(${SPIDRLIB} hdidimensionalityreduction hdiutils hdidata)
 endif()
+
+# -----------------------------------------------------------------------------
+# Other targets
+# -----------------------------------------------------------------------------
+# Example project
+if(CREATE_EXAMPLE)
+	message(STATUS "Creating example executable")
+	set(SPIDREXAMPLE "SpidrExample")
+	add_executable(${SPIDREXAMPLE} example/SpidrExample.cpp)
+	target_link_libraries(${SPIDREXAMPLE} PUBLIC SpidrLib)
+	target_compile_features(${SPIDREXAMPLE} PUBLIC cxx_std_17)
+	target_compile_definitions(${SPIDREXAMPLE} PUBLIC -DGLFW_INCLUDE_NONE)
+endif()
+
+if(CREATE_PYTHON_WRAPPER)
+	message(STATUS "Creating python wrapper")
+	set(SPIDRWRAPPER "Spidrwrapper")
+	
+	add_subdirectory(python_wrapper/pybind11)
+	
+	pybind11_add_module(${SPIDRWRAPPER}
+		python_wrapper/src/SpidrBind.cpp
+		python_wrapper/src/SpidrWrapper.h
+		python_wrapper/src/SpidrWrapper.cpp)
+	
+	target_link_libraries(${SPIDRWRAPPER} PUBLIC SpidrLib)
+	target_compile_features(${SPIDRWRAPPER} PUBLIC cxx_std_17)
+	target_compile_definitions(${SPIDRWRAPPER} PUBLIC -DGLFW_INCLUDE_NONE)
+	
+	# EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
+	# define (VERSION_INFO) here.
+	target_compile_definitions(${SPIDRWRAPPER} PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+endif()
+
+

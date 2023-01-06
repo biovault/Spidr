@@ -5,7 +5,7 @@
 [submodule "python-wrapper/pybind11"]
 	path = python_wrapper/pybind11
 	url = https://github.com/pybind/pybind11
-	branch = stable
+	branch = v2.10
 [submodule "external/vcpkg"]
 	path = external/vcpkg
 	url = https://github.com/microsoft/vcpkg
