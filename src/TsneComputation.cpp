@@ -95,6 +95,7 @@ void TsneComputation::initTSNE()
         double t = 0.0;
         {
             hdi::utils::ScopedTimer<double> timer(t);
+            // _probabilityDistribution won't be symmetric, a joint prob dist is computed later during the init of _GPGPU_tSNE
             probabilityGenerator.computeGaussianDistributions(_knn_distances, _knn_indices, _nn, _probabilityDistribution, probGenParams);
         }
 		spdlog::info("Probability distributions calculated.");
@@ -142,6 +143,7 @@ void TsneComputation::initGradientDescent()
 		throw std::runtime_error("Failed to initialize OpenGL context");
 	}
     // Initialize GPGPU-SNE
+    // here, a joint prob dist is computed from the non-symmetric _probabilityDistribution
     _GPGPU_tSNE.initialize(_probabilityDistribution, &_embedding, tsneParams);
     
     copyFloatOutput();

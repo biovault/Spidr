@@ -234,8 +234,8 @@ plt.figtext(0.61, height_lab_c, "Histograms", va="center", ha="center", size=10)
 plt.figtext(0.81, height_lab_c, "Bhattacharyya", va="center", ha="center", size=10)
 
 #plt.tight_layout()
-#plt.show()
-plt.savefig("example_several_DR_and_metrics.pdf", format="pdf", bbox_inches="tight")
+plt.show()
+#plt.savefig("example_several_DR_and_metrics.pdf", format="pdf", bbox_inches="tight")
 
 
 ###################

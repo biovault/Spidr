@@ -26,8 +26,8 @@ int main() {
 	const std::string fileName = "CheckeredBoxes_2Ch_32.bin";
 	const std::string emebddingName = "CheckeredBoxes_2Ch_32_sp-tSNE_Chamfer.bin";
 
-	const std::string loadPath = projectDir.string() + "/data/" + fileName;
-	const std::string savePath = projectDir.string() + "/data/" + emebddingName;
+	const std::string loadPath = projectDir.string() + "/example/data/" + fileName;
+	const std::string savePath = projectDir.string() + "/example/data/" + emebddingName;
 
 	// load data
 	const std::vector<float> data = readData(loadPath);

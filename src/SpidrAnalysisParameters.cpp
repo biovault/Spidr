@@ -15,8 +15,8 @@ namespace logging {
         case distance_metric::METRIC_BHATTACHARYYA: return "Bhattacharyya distance between two multivariate normal distributions";
         case distance_metric::METRIC_DETMATRATIO: return "Deteterminant Ratio part of Bhattacharyya distance";
         case distance_metric::METRIC_CMD_covmat: return "Correlation Matrix distance";
-        case distance_metric::METRIC_FRECHET_Gen: return "Fréchet distance";
-        case distance_metric::METRIC_FRECHET_CovMat: return "Fréchet distance but ignoring the means";
+        case distance_metric::METRIC_FRECHET_Gen: return "FrÃ©chet distance";
+        case distance_metric::METRIC_FRECHET_CovMat: return "FrÃ©chet distance but ignoring the means";
         case distance_metric::METRIC_FROBENIUS_CovMat: return "Frobenius norm of element-wise differences";
         case distance_metric::METRIC_EUC_sep: return "Two weighted Euclidean distances (squared)";
         default: return "Unknown or unnamed distance metric";

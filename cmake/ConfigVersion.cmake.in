@@ -1,0 +1,31 @@
+# This is a workaround. The HDILib cmake uses CMAKE_SOURCE_DIR instead of CMAKE_CURRENT_SOURCE_DIR, making its usage as a submodule a little tricky.
+
+# This is a simplified version of cmake's BasicConfigVersion-ExactVersion.cmake.in 
+# modified with an override that allows an empty 
+# PACKAGE_FIND_VERSION to be treated as a compatible match.
+# Ideally CMake would support semver and this would be done via build_identifier
+# see https://gitlab.kitware.com/cmake/cmake/-/issues/16716 for a discussion on this subject.
+
+set(PACKAGE_VERSION @hdilib_package_version@)
+
+if(PACKAGE_FIND_VERSION STREQUAL "") # always matches
+        set(PACKAGE_VERSION_COMPATIBLE TRUE)
+    else()
+        if(@hdilib_package_version@ MATCHES "^([0-9]+\\.[0-9]+\\.[0-9]+)\\.") # strip the tweak version
+            set(CVF_VERSION_NO_TWEAK "${CMAKE_MATCH_1}")
+        else()
+            set(CVF_VERSION_NO_TWEAK @hdilib_package_version@)
+        endif()
+
+        if(PACKAGE_FIND_VERSION MATCHES "^([0-9]+\\.[0-9]+\\.[0-9]+)\\.") # strip the tweak version
+            set(REQUESTED_VERSION_NO_TWEAK "${CMAKE_MATCH_1}")
+        else()
+            set(REQUESTED_VERSION_NO_TWEAK "${PACKAGE_FIND_VERSION}")
+        endif()
+
+        if(REQUESTED_VERSION_NO_TWEAK STREQUAL CVF_VERSION_NO_TWEAK)
+            set(PACKAGE_VERSION_COMPATIBLE TRUE)
+        else()
+            set(PACKAGE_VERSION_COMPATIBLE FALSE)
+        endif()
+endif()

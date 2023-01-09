@@ -1098,12 +1098,12 @@ namespace hnswlib {
         return 1 - (covmat1*covmat2).trace() / (covmat1.norm() * covmat2.norm());
     }
 
-    // The Fréchet distance between multivariate normal distributions
+    // The FrÃ©chet distance between multivariate normal distributions
     // https://doi.org/10.1016/0047-259X(82)90077-X
     float FrechetDistGeneral(const Eigen::VectorXf& mean1, const Eigen::MatrixXf& covmat1, const float det_sqrt_1, const Eigen::VectorXf& mean2, const Eigen::MatrixXf& covmat2, const float det_sqrt_2) {
         return (mean1- mean2).squaredNorm() + (covmat1 + covmat2 - 2 * (covmat2*covmat1).sqrt()).trace();
     }
-    // Fréchet distance without the means comparison
+    // FrÃ©chet distance without the means comparison
     float FrechetDistCovMat(const Eigen::VectorXf& mean1, const Eigen::MatrixXf& covmat1, const float det_sqrt_1, const Eigen::VectorXf& mean2, const Eigen::MatrixXf& covmat2, const float det_sqrt_2) {
         return (covmat1 + covmat2 - 2 * (covmat2*covmat1).sqrt()).trace();
     }

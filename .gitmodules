@@ -2,19 +2,15 @@
 	path = external/hnswlib
 	url = https://github.com/nmslib/hnswlib.git
 	branch = master
-[submodule "external/spdlog"]
-	path = external/spdlog
-	url = https://github.com/gabime/spdlog
-	branch = v1.x
-[submodule "external/glfw"]
-	path = external/glfw
-	url = https://github.com/glfw/glfw/
-	branch = 3.3-stable
 [submodule "python-wrapper/pybind11"]
 	path = python_wrapper/pybind11
 	url = https://github.com/pybind/pybind11
-	branch = stable
-[submodule "external/eigen"]
-	path = external/eigen
-	url = https://gitlab.com/libeigen/eigen.git
-	branch = 3.4
+	branch = v2.10
+[submodule "external/vcpkg"]
+	path = external/vcpkg
+	url = https://github.com/microsoft/vcpkg
+	branch = master
+[submodule "external/HDILib"]
+	path = external/HDILib
+	url = https://github.com/biovault/HDILib
+	branch = master

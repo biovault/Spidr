@@ -1,13 +1,15 @@
-# Spidr wrapper
+# Spidr Python Wrapper
 
-Creates python bindings for the SpidrLib, based on [this](https://github.com/pybind/cmake_example) pybind11 example.
+You can use the spidr library from python, using this wrapper based on [this](https://github.com/pybind/cmake_example) pybind11 example.
 
 ## Installation
-Make sure, that the external pybind11 submodule is present. That should be the case if you cloned the entire repo with the `--recurse-submodule` option. To build and install the python wrapper use (after navigating into this folder in a python shell):
+Make sure, that the external pybind11 submodule is present. That should be the case if you cloned the entire repo with the `--recurse-submodule` option. To build and install the python wrapper, open a terminal at the root dir of this repo - one folder up- and use (for pip < 22.1 I recommend the option ``--use-feature=in-tree-build``):
 
 ```bash
-pip install . --use-feature=in-tree-build
+pip install .
 ```
+
+This will handle the build based on the CMakeList.txt.
 
 To enable AXV instructions, before building the package set an environment variable `USE_AVX=ON`. For example, assuming you use a conda shell and a virtual environment:
 ```conda
@@ -21,7 +23,7 @@ conda activate ENV_NAME
 
 ## Usage
 
-See `example/example_chamfer.py` and `example/example_multiple.py` for t-SNE, UMAP and MDS examples with a synthetic data set.
+See `example/example_chamfer.py` and `example/example_multiple.py` for t-SNE, UMAP and MDS examples with a synthetic data set. The dependencies of the examples are listed in `requirements.txt`.
 
 These emebddings are based on the data in  `../../example/data/CheckeredBoxes_2Ch_64_tiff/` and recolor the image based on the emebddings and a 2D colormaps, as done in `example/example_multiple.py`.
 ![Example: embeddings and re-colored data](example/example_multiple_embs.png)
