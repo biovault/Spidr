@@ -173,7 +173,7 @@ endif()
 
 if(CREATE_PYTHON_WRAPPER)
 	message(STATUS "Creating python wrapper")
-	set(SPIDRWRAPPER "Spidrwrapper")
+	set(SPIDRWRAPPER "spidr")
 	
 	add_subdirectory(python_wrapper/pybind11)
 	

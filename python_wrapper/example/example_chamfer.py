@@ -172,3 +172,4 @@ pltColProj(5, 'MDS std', emb_mds_std, emb_mds_std_colors)
 
 plt.tight_layout()
 plt.show()
+#plt.savefig("example_chamfer_data.pdf", format="pdf", bbox_inches="tight")
