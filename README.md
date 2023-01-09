@@ -2,14 +2,14 @@
 
 [![DOI](https://zenodo.org/badge/460389824.svg)](https://zenodo.org/badge/latestdoi/460389824)
 
-Introduces spatial neighborhood information in dimensionality reduction for high-dimensional images. 
-Extends t-SNE such that similarities are based on a point's spatial neighborhood instead of only the high-dimensional point itself.
+Introduces spatial neighborhood information in dimensionality reduction methods for high-dimensional images. 
+Extends t-SNE such that similarities are based on a point's spatial neighborhood instead of only the high-dimensional point itself (see `python_wrapper\example\example_multiple.py` for examples with UMAP and MDS).
 
-To clone the repo and its external submodules (hnswlib, glfw, spdlog):
+To clone the repo and its external submodules (vcpkg, hnswlib, pybind11, HDILib):
 
 ```git clone --recurse-submodule https://github.com/biovault/Spidr/```
 
-Currently, tested on Windows with Visual Studio 2019. Use cmake for setting up the project:
+Currently, tested on Windows 10 with Visual Studio 2019. Use cmake for setting up the project:
 ```
 mkdir build
 cd build
@@ -19,15 +19,12 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 The standard cpp implementation uses the A-tSNE implementation from the [HDILib](https://github.com/biovault/HDILib) and [Hnswlib](https://github.com/nmslib/hnswlib) for approximated nearest neighbor search. Other DR techniques might also be used, as shown in the python example below.
 
 ## Usage
-
-See `example/SpidrExample.cpp` for an example on how to use the library in cpp.
-
-See `python_wrapper` for install intructions and an example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings.
+By default, the cmake project creates two targets in addition to the library: 
+- See `example/SpidrExample.cpp` for an example on how to use the library in cpp. Set the cmake option `CREATE_EXAMPLE=OFF` to not create this target.
+- See `python_wrapper` for install intructions and an example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings. Set cmake option `CREATE_PYTHON_WRAPPER=OFF` to not create this target.
 
 ## Dependencies
-Not all dependencies are included in this repo (see submodules in `external/`): 
-- [HDILib](https://github.com/biovault/HDILib) (by default, cmake will download a pre-built version of this library. You can also set the cmake variable `USE_ARTIFACTORY_LIBS` to FALSE and define the path variables HDILIB_ROOT, FLANN_ROOT and LZ4_ROOT by hand. See the HDILib documentation for more detail on the HDILib and it's dependencies.)
-- OpenMP
+All depedencies are either managed by vcpkg or are submodules of this repo. If you want to build the [HDILib](https://github.com/biovault/HDILib) yourselft, set the cmake option `BUILD_HDILIB=OFF` and provide the variables HDILIB_ROOT, FLANN_ROOT, LZ4_ROOT. See the HDILib documentation for more detail on the HDILib and it's dependencies.
 
 ## References
 This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), published at [PacificVis 2022](https://doi.org/10.1109/PacificVis53943.2022.00010). A preprint is available on arXiv [2202.09179](https://arxiv.org/abs/2202.09179), the conference talk recording and other supplemental material are available [here](http://graphics.tudelft.nl/Publications-new/2022/VVLEH22/).
