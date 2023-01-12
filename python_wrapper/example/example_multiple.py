@@ -264,7 +264,6 @@ for sp_metric in sp_metrics:
         write_binary(embs_dict[sp_metric].flatten().astype(np.float32), save_path + save_name)
 
 # standard embeddings
-write_binary(emb_tsne_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-tsne_emb_I{iterations}_P{perplexity}.bin")
-write_binary(emb_umap_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-umap_emb_I{iterations}.bin")
-write_binary(emb_mds_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-mds_emb_I{iterations}.bin")
-
+write_binary(emb_tsne_std.flatten().astype(np.float32), concat_path(save_path, f"{data_name.split('.')[0]}_std-tsne_emb_I{iterations}_P{perplexity}.bin"))
+write_binary(emb_umap_std.flatten().astype(np.float32), concat_path(save_path, f"{data_name.split('.')[0]}_std-umap_emb_I{iterations}.bin"))
+write_binary(emb_mds_std.flatten().astype(np.float32), concat_path(save_path, f"{data_name.split('.')[0]}_std-mds_emb_I{iterations}.bin"))
