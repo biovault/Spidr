@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import getcwd
 from os.path import dirname as up
+from os.path import join as concat_path
 from scipy.sparse import csr_matrix
 from nptsne import TextureTsne as TSNE  # Texture refers to implementation details, not texture-aware DR
 from umap import UMAP
@@ -14,10 +15,13 @@ from sklearn.manifold import MDS
 
 from utils import load_binary, assign_embedding_colors
 
+print("example_multiple.py")
+print("# Load data")
+
 # load data
-data_path = up(up(getcwd())) + "\\example\\data\\"
+data_path = concat_path(up(up(up(__file__))), 'example', 'data')
 data_name = "CheckeredBoxes_2Ch_64.bin"
-data_raw = load_binary(data_path + data_name)
+data_raw = load_binary(concat_path(data_path, data_name))
 
 # prep data
 data = data_raw.reshape((-1, 2))
@@ -43,6 +47,8 @@ perplexity = 30
 ##################
 # Plots the data #
 ##################
+print("# Plot the data")
+
 data_min = np.min(data_img)
 data_max = np.max(data_img)
 
@@ -62,13 +68,14 @@ plt.show()
 #################################
 # spatially informed embeddings #
 #################################
+print("# Begin computing spatially informed embeddings")
+
 embs_tsne_sp = {}
 embs_umap_sp = {}
 embs_mds_sp = {}
 
 embs = {"tsne": embs_tsne_sp, "umap": embs_umap_sp, "mds": embs_mds_sp}
 
-print("# Begin computing spatially informed embeddings")
 for sp_metric in sp_metrics:
     print(f"Metric: {sp_metric}")
     #########
@@ -154,8 +161,9 @@ print("# Finished computing spatially informed embeddings")
 print("# Begin computing standard embeddings")
 # standard t-SNE
 print("# Standard t-SNE with HDILib (nptsne)")
-alg_tsne = TSNE(perplexity=perplexity, iterations=iterations)
-emb_tsne_std = alg_tsne.fit_transform(data).reshape((numPoints, 2))
+#alg_tsne = TSNE(perplexity=perplexity, iterations=iterations)
+#emb_tsne_std = alg_tsne.fit_transform(data).reshape((numPoints, 2))  # there might be a bug in nptsne causing problems on linux. you might as well go ahead here with emb_tsne_std = data.copy()
+emb_tsne_std = data.copy()
 
 # standard UMAP
 print("# Standard UMAP with umap-learn")
@@ -172,9 +180,10 @@ print("# Finished computing standard embeddings")
 ####################
 # Plots embeddings #
 ####################
+print("# Plot embeddings")
 
 # map embedding positions to colors and then back to the image space
-clm_path = '../../example/eval/2d_Mittelstaed.png'
+clm_path = '../../example/eval/2D_Mittelstaed.png'
 
 embs_tsne_sp_colors = {}
 embs_umap_sp_colors = {}
@@ -241,11 +250,13 @@ plt.show()
 ###################
 # Save embeddings #
 ###################
+print("# Save embeddings")
+
 from utils import write_binary
-save_path = ".\\embeddings\\"
+save_path = concat_path(up(__file__), "embeddings")
 
 print(f"# Saving all embeddings to: {save_path}")
-# spatially informed embeddings
+ spatially informed embeddings
 for sp_metric in sp_metrics:
     for embs_name, embs_dict in embs.items():
         perp_str = f"_P{perplexity}" if embs_name == "tsne" else ""
@@ -256,3 +267,4 @@ for sp_metric in sp_metrics:
 write_binary(emb_tsne_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-tsne_emb_I{iterations}_P{perplexity}.bin")
 write_binary(emb_umap_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-umap_emb_I{iterations}.bin")
 write_binary(emb_mds_std.flatten().astype(np.float32), save_path + f"{data_name.split('.')[0]}_std-mds_emb_I{iterations}.bin")
+
