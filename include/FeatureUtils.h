@@ -2,9 +2,11 @@
 
 #include <cmath>
 #include <vector>
-#include <utility>  // std::pair
-#include <tuple>  // std::tuple
-#include <memory>  // std::unique_ptr
+#include <utility>   // std::pair
+#include <tuple>     // std::tuple
+#include <memory>    // std::unique_ptr
+#include <algorithm> // std::for_each
+#include <execution> // std::par_unseq
 
 #include "SpidrAnalysisParameters.h"
 #include <Eigen/Dense>
@@ -16,7 +18,13 @@
  * \param normVal nomalization constant
  */
 template<typename T>
-void NormVector(std::vector<T>& vec, T normVal);
+void NormVector(std::vector<T>& vec, T normVal){
+
+    std::for_each(std::execution::par_unseq, std::begin(vec), std::end(vec), [normVal](auto& val) {
+        val /= normVal;
+    });
+
+}
 
 /*! compute a row of Pascal's triangle  https://en.wikipedia.org/wiki/Pascal%27s_triangle
  *
@@ -279,7 +287,7 @@ public:
     scalar_type operator[](int index) const;
 
     Eigen::Vector<scalar_type, -1> counts() const { return _counts; };
-    Eigen::VectorXf normalizedCounts() const { return _counts.cast<float>() / _counts.sum(); };
+    Eigen::VectorXf normalizedCounts() const { return _counts.template cast<float>() / _counts.sum(); };
 
 protected:
     Eigen::Vector<scalar_type, -1> _counts;
@@ -358,7 +366,7 @@ public:
 
     Eigen::Vector<scalar_type, -1> counts() const { return _counts; };
     const Eigen::Vector<scalar_type, -1>* countsp() const { return &_counts; };
-    Eigen::VectorXf normalizedCounts() const { return _counts.cast<float>() / _counts.sum(); };
+    Eigen::VectorXf normalizedCounts() const { return _counts.template cast<float>() / _counts.sum(); };
 
     std::vector<scalar_type> counts_std() const { return std::vector<scalar_type>(_counts.data(), _counts.data() + _counts.size()); };
     std::vector<float> normalizedCounts_std() const { auto eigen_counts_norm = normalizedCounts(); return std::vector<scalar_type>(eigen_counts_norm.data(), eigen_counts_norm.data() + eigen_counts_norm.size()); };
