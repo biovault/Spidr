@@ -1,21 +1,11 @@
 #include "FeatureUtils.h"
 
-#include <execution>    // par_unseq
-#include <algorithm>    // for_each_n
 #include <numeric>      // iota
 #include <cmath> 
 #include <stdexcept>
 #include <random>
+#include <cfloat>       // FLT_MAX
 
-
-template<typename T>
-void NormVector(std::vector<T>& vec, T normVal) {
-
-    std::for_each(std::execution::par_unseq, std::begin(vec), std::end(vec), [normVal](auto& val) {
-        val /= normVal;
-    });
-
-}
 
 std::vector<unsigned int> PascalsTriangleRow(const size_t n) {
     std::vector<unsigned int> row(n + 1, 1);

@@ -46,6 +46,14 @@ if(BUILD_HDILIB)
     $<INSTALL_INTERFACE:>)
 	target_include_directories(hdidimensionalityreduction PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
     $<INSTALL_INTERFACE:>)
+    
+    target_link_libraries(hdidimensionalityreduction PRIVATE lz4::lz4)
+    if(UNIX)
+        set_target_properties(hdiutils PROPERTIES POSITION_INDEPENDENT_CODE ON)
+        set_target_properties(hdidata PROPERTIES POSITION_INDEPENDENT_CODE ON)
+        set_target_properties(hdidimensionalityreduction PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
+
 
 else()
 	message(STATUS "Using prebuilt external HDILib")	
@@ -105,6 +113,10 @@ target_compile_features(${SPIDRLIB} PUBLIC cxx_std_17)
 
 if (MSVC)
     target_compile_options(${SPIDRLIB} PUBLIC /bigobj)
+endif()
+
+if(UNIX)
+    set_target_properties(${SPIDRLIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # Hardware accelations: SSE and AVX
