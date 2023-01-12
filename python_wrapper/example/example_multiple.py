@@ -256,7 +256,7 @@ from utils import write_binary
 save_path = concat_path(up(__file__), "embeddings")
 
 print(f"# Saving all embeddings to: {save_path}")
- spatially informed embeddings
+# spatially informed embeddings
 for sp_metric in sp_metrics:
     for embs_name, embs_dict in embs.items():
         perp_str = f"_P{perplexity}" if embs_name == "tsne" else ""
