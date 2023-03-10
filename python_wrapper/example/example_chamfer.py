@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import getcwd
 from os.path import dirname as up
+from os.path import join as concat_path
 from scipy.sparse import csr_matrix
 from nptsne import TextureTsne as TSNE  # Texture refers to implementation details, not texture-aware DR
 from umap import UMAP
@@ -10,10 +11,14 @@ from sklearn.manifold import MDS
 
 from utils import load_binary, assign_embedding_colors
 
+print("example_chamfer.py")
+print("# Load data")
+
 # load data
-data_path = up(up(getcwd())) + "\\example\\data\\"
+data_path = concat_path(up(up(up(__file__))), 'example', 'data')
 data_name = "CheckeredBoxes_2Ch_32.bin"
-data_raw = load_binary(data_path + data_name)
+data_raw = load_binary(concat_path(data_path, data_name))
+
 
 # prep data
 data = data_raw.reshape((-1, 2))
@@ -27,6 +32,7 @@ data_img = data.reshape((imgHeight, imgWidth, 2))
 sp_metric = spidr.DistMetric.Bhattacharyya  # Chamfer_pc, QF_hist (define numHistBins),
 sp_weight = spidr.WeightLoc.uniform
 sp_neighborhoodSize = 1  # one neighbor in each direction, i.e. a 3x3 neighborhood
+
 
 #################################
 # spatially informed embeddings #
@@ -94,7 +100,7 @@ emb_mds = alg_mds.fit_transform(knn_dists)
 # standard t-SNE
 print("# Standard t-SNE with HDILib (nptsne)")
 alg_tsne = TSNE()
-emb_tsne_std = alg_tsne.fit_transform(data).reshape((numPoints, 2))
+emb_tsne_std = alg_tsne.fit_transform(data).reshape((numPoints, 2)) # there might be a bug in nptsne causing problems on linux. you might as well go ahead here with emb_tsne_std = data.copy()
 
 # standard UMAP
 print("# Standard UMAP with umap-learn")
@@ -141,7 +147,7 @@ plt.show()
 
 ## Plot embeddings and recolored images
 # map embedding positions to colors and then back to the image space
-clm_path = '../../example/eval/2d_Mittelstaed.png'
+clm_path = '../../example/eval/2D_Mittelstaed.png'
 emb_tsne_colors = assign_embedding_colors(emb_tsne, clm_path, rot90=3)
 emb_tsne_std_colors = assign_embedding_colors(emb_tsne_std, clm_path, rot90=3)
 emb_umap_colors = assign_embedding_colors(emb_umap, clm_path, rot90=3)

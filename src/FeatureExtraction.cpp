@@ -15,6 +15,7 @@
 #include <cmath>        // std::pow
 #include <utility>      // std::forward
 #include <chrono>       // std::chrono
+#include <cfloat>       // FLT_MAX
 
 FeatureExtraction::FeatureExtraction() :
     _stopFeatureComputation(false)
@@ -436,7 +437,7 @@ void FeatureExtraction::weightNeighborhood(loc_Neigh_Weighting weighting) {
     }
 
     // Normalize such that sum(_neighborhoodWeights) = 1
-    NormVector(_neighborhoodWeights, std::accumulate(_neighborhoodWeights.begin(), _neighborhoodWeights.end(), 0.0f)); 
+    NormVector<float>(_neighborhoodWeights, std::accumulate(_neighborhoodWeights.begin(), _neighborhoodWeights.end(), 0.0f)); 
     _neighborhoodWeightsSum = std::accumulate(_neighborhoodWeights.begin(), _neighborhoodWeights.end(), 0.0f);
 
     _neighborhoodWeights_eig = Eigen::Map<Eigen::VectorXf>(_neighborhoodWeights.data(), _neighborhoodSize);

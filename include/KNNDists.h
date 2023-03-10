@@ -3,6 +3,7 @@
 
 #if defined(__GNUC__)
 #define PORTABLE_ALIGN32hnsw __attribute__((aligned(32)))
+#include <math.h>
 #else
 #define PORTABLE_ALIGN32hnsw __declspec(align(32))
 #endif
@@ -1077,7 +1078,11 @@ namespace hnswlib {
         assert(det_sqrt_1 > 0);
         assert(det_sqrt_2 > 0);
 
+#if defined(__GNUC__)
+        return logf(det_comb / (det_sqrt_1 * det_sqrt_2));
+#else
         return std::logf(det_comb / (det_sqrt_1 * det_sqrt_2));
+#endif
     }
 
     // Bhattacharyya distance, only Mahalanobis part

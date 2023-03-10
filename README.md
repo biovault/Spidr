@@ -18,6 +18,11 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 
 The standard cpp implementation uses the A-tSNE implementation from the [HDILib](https://github.com/biovault/HDILib) and [Hnswlib](https://github.com/nmslib/hnswlib) for approximated nearest neighbor search. Other DR techniques might also be used, as shown in the python example below.
 
+On linux systems you need to make sure that some dependencies are installed:
+```
+sudo apt install curl zip unzip tar pkg-config libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
+```
+
 ## Usage
 By default, the cmake project creates two targets in addition to the library: 
 - See `example/SpidrExample.cpp` for an example on how to use the library in cpp. Set the cmake option `CREATE_EXAMPLE=OFF` to not create this target.
