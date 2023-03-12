@@ -16,9 +16,13 @@ cd build
 cmake .. -G "Visual Studio 16 2019" -A x64
 ```
 
-The standard cpp implementation uses the A-tSNE implementation from the [HDILib](https://github.com/biovault/HDILib) and [Hnswlib](https://github.com/nmslib/hnswlib) for approximated nearest neighbor search. Other DR techniques might also be used, as shown in the python example below.
+The standard cpp implementation uses the t-SNE implementation from the [HDILib](https://github.com/biovault/HDILib) and [Hnswlib](https://github.com/nmslib/hnswlib) for approximated nearest neighbor search. Other DR techniques might also be used, as shown in the python example below.
 
-On linux systems you need to make sure that some dependencies are installed:
+The HDILib dependency is currently handled a little different depending on which OS you want to build the Spidr library.
+On Linux, the HDILib is build with this project. vcpkg will handle all it's dependencies.
+On Windows, you can do the same, but when inlcuding this project into another, the resulting library might have some dll dependencies on lz4 (a flann dependency, which in turn in used by HDILib). This is easier to handle with the [HDILibSlim](https://github.com/alxvth/HDILibSlim), a version of the HDILib without dependencies. Build it, set `BUILD_HDILIB` OFF and `USE_HDILIBSLIM` ON, and provide the `HDILIBSLIM_ROOT` to the cmake folder in the HDILibSlim\lib installation directory. 
+
+On linux systems you need to make sure that some dependencies are installed, e.g. on Ubuntu:
 ```
 sudo apt install curl zip unzip tar pkg-config libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
 ```
