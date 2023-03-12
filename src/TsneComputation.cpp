@@ -9,6 +9,12 @@
 #include "hdi/dimensionality_reduction/tsne_parameters.h"
 #include "hdi/utils/scoped_timers.h"
 
+#ifdef __APPLE__
+#include "glad/glad_3_3.h"
+#define __gl3_h_
+#endif
+#include <GLFW/glfw3.h>
+
 // not present in glfw 3.1.2
 #ifndef GLFW_FALSE
 #define GLFW_FALSE 0

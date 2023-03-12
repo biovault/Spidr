@@ -14,3 +14,15 @@
 	path = external/HDILib
 	url = https://github.com/biovault/HDILib
 	branch = master
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+	branch = 3.4
+[submodule "external/spdlog"]
+	path = external/spdlog
+	url = https://github.com/gabime/spdlog
+	branch = v1.x
+[submodule "external/glfw"]
+	path = external/glfw
+	url = https://github.com/glfw/glfw/
+	branch = 3.3-stable

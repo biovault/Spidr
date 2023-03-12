@@ -2,18 +2,12 @@
     "name": "spidr",
     "version": "0.0.1",
     "dependencies": [
-      "eigen3",
-      "glfw3",
-      "spdlog",
       "lz4",
       "flann",
       {"name": "glad", "features": [ "gl-api-latest" ]}
     ],
     "builtin-baseline":"12c2a93b4007612b5ffa980c9d2235eb0bcac10f",
     "overrides": [
-      { "name": "eigen3", "version": "3.4.0" },
-      { "name": "glfw3", "version": "3.3.8" },
-      { "name": "spdlog", "version": "1.9.2" },
       { "name": "lz4", "version": "1.9.3"},
       { "name": "flann", "version": "2019-04-07#1"},
       { "name": "glad", "version": "0.1.36"}

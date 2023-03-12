@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21.0)
 
 option(BUILD_HDILIB "Build the HDILib from submodule - otherwise provide the variable HDILIB_ROOT" ON)
+option(USE_HDILIBSLIM "Use the slim HDILib version" OFF)
 option(CREATE_EXAMPLE "Creates an example executable using the Spidr library" ON)
 option(CREATE_PYTHON_WRAPPER "Creates a python wrapper of the Spidr library" ON)
 
@@ -14,18 +15,21 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/external/vcpkg/scripts/bui
 set(SPIDRLIB "SpidrLib")
 PROJECT(${SPIDRLIB} C CXX)
 
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /permissive- /Zc:__cplusplus")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+endif(MSVC)
+
 # -----------------------------------------------------------------------------
-# Libraries
+# Library dependencies
 # -----------------------------------------------------------------------------
 
 # find external packages
 find_package(OpenGL REQUIRED)
 find_package(OpenMP REQUIRED)
-find_package(Eigen3 3.4 CONFIG REQUIRED NO_MODULE)
 find_package(lz4 CONFIG REQUIRED)
 find_package(flann CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(spdlog 1.9.2 CONFIG REQUIRED)
 
 # Set include path, which vcpkg does not automatically provide (only *_FOUND and *_DIR)
 #find_path(flann_INCLUDE_DIR NAMES flann.hpp PATH_SUFFIXES flann)
@@ -36,15 +40,15 @@ if(BUILD_HDILIB)
 	
 	# use the HDILib submodule
 	set(INSTALL_PREBUILT_DEPENDENCIES ON)
-	set(HDILib_Sub "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILib")
+	set(HDILib_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILib")
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/HDILib" ${CMAKE_CURRENT_BINARY_DIR}/HDILib)
 	
 	# manage some HDILib things for hdidimensionalityreduction hdiutils hdidata
-	target_include_directories(hdiutils PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
+	target_include_directories(hdiutils PUBLIC $<BUILD_INTERFACE:${HDILib_INCLUDE_DIR}>  
     $<INSTALL_INTERFACE:>)
-	target_include_directories(hdidata PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
+	target_include_directories(hdidata PUBLIC $<BUILD_INTERFACE:${HDILib_INCLUDE_DIR}>  
     $<INSTALL_INTERFACE:>)
-	target_include_directories(hdidimensionalityreduction PUBLIC $<BUILD_INTERFACE:${HDILib_Sub}>  
+	target_include_directories(hdidimensionalityreduction PUBLIC $<BUILD_INTERFACE:${HDILib_INCLUDE_DIR}>  
     $<INSTALL_INTERFACE:>)
     
     target_link_libraries(hdidimensionalityreduction PRIVATE lz4::lz4)
@@ -53,15 +57,28 @@ if(BUILD_HDILIB)
         set_target_properties(hdidata PROPERTIES POSITION_INDEPENDENT_CODE ON)
         set_target_properties(hdidimensionalityreduction PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
-
-
 else()
-	message(STATUS "Using prebuilt external HDILib")	
-	if(NOT DEFINED HDILIB_ROOT OR NOT DEFINED FLANN_ROOT OR NOT DEFINED LZ4_ROOT)
-		message(FATAL_ERROR "Define HDILIB_ROOT, FLANN_ROOT, LZ4_ROOT if you are not using pre-build external libraries")	
+	if(USE_HDILIBSLIM)
+		message(STATUS "Using prebuilt external HDILibSlim, https://github.com/alxvth/HDILibSlim")	
+		if(NOT DEFINED HDILIBSLIM_ROOT)
+			message(FATAL_ERROR "Define HDILIBSLIM_ROOT")	
+		endif()
+		find_package(HDILibSlim COMPONENTS hdiutils hdidata hdidimensionalityreduction PATHS ${HDILIBSLIM_ROOT} CONFIG REQUIRED)
+		
+		set(HDILib_INCLUDE_DIR ${HDILibSlim_INCLUDE_DIR})
+		set(HDI_PREFIX HDISlim)
+		
+	else()
+		message(STATUS "Using prebuilt external HDILib")	
+		if(NOT DEFINED HDILIB_ROOT OR NOT DEFINED FLANN_ROOT OR NOT DEFINED LZ4_ROOT)
+			message(FATAL_ERROR "Define HDILIB_ROOT, FLANN_ROOT, LZ4_ROOT if you are using pre-build external libraries")	
+		endif()
+		
+		find_package(HDILib COMPONENTS hdiutils hdidata hdidimensionalityreduction PATHS ${HDILIB_ROOT} CONFIG REQUIRED)
+		
+		set(HDILib_INCLUDE_DIR ${HDILib_INCLUDE_DIR})
+		set(HDI_PREFIX HDI)
 	endif()
-	
-	find_package(HDILib COMPONENTS hdiutils hdidata hdidimensionalityreduction PATHS ${HDILIB_ROOT} CONFIG REQUIRED)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -109,10 +126,10 @@ add_library(${SPIDRLIB} STATIC ${SOURCES})
 # Target properties
 # -----------------------------------------------------------------------------
 # Request C++17
-target_compile_features(${SPIDRLIB} PUBLIC cxx_std_17)
+target_compile_features(${SPIDRLIB} PRIVATE cxx_std_17)
 
 if (MSVC)
-    target_compile_options(${SPIDRLIB} PUBLIC /bigobj)
+    target_compile_options(${SPIDRLIB} PRIVATE /bigobj)
 endif()
 
 if(UNIX)
@@ -120,12 +137,12 @@ if(UNIX)
 endif()
 
 # Hardware accelations: SSE and AVX
-target_compile_definitions(${SPIDRLIB} PUBLIC -DUSE_SSE)
+target_compile_definitions(${SPIDRLIB} PRIVATE -DUSE_SSE)
 set(USE_AVX OFF CACHE BOOL "Don't use AVX by default to support old hardware" )
 if(${USE_AVX})
-	target_compile_definitions(${SPIDRLIB} PUBLIC -DUSE_AVX)
+	target_compile_definitions(${SPIDRLIB} PRIVATE -DUSE_AVX)
 	if( MSVC )
-		target_compile_definitions(${SPIDRLIB} PUBLIC /arch:AVX)
+		target_compile_definitions(${SPIDRLIB} PRIVATE /arch:AVX)
 	endif()
 	message(STATUS "Using AVX instruction set extensions")
 endif()
@@ -139,6 +156,8 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only" )
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "disable GLFX examples")
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "disable GLFX tests") 
 set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
+add_subdirectory("external/glfw")
+add_dependencies(${SPIDRLIB} glfw)
 
 # Prevent glfw including the OpenGL headers
 # On Windows and Linux these come from glad in the HDILib
@@ -151,17 +170,27 @@ target_include_directories(${SPIDRLIB} PUBLIC "include")
 
 # Include external header-only libraries
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
+target_include_directories(${SPIDRLIB} PUBLIC "external/eigen/")
+target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
+target_include_directories(${SPIDRLIB} PUBLIC "external/glfw/include")
+target_include_directories(${SPIDRLIB} PUBLIC ${HDILib_INCLUDE_DIR})
 
 # -----------------------------------------------------------------------------
 # Target library linking
 # -----------------------------------------------------------------------------
-target_link_libraries(${SPIDRLIB} PUBLIC glfw)
+target_link_libraries(${SPIDRLIB} PRIVATE glfw)
 target_link_libraries(${SPIDRLIB} PUBLIC OpenMP::OpenMP_CXX)
-target_link_libraries(${SPIDRLIB} PUBLIC Eigen3::Eigen)
-target_link_libraries(${SPIDRLIB} PUBLIC spdlog::spdlog_header_only)
-target_link_libraries(${SPIDRLIB} PUBLIC lz4::lz4)
-target_link_libraries(${SPIDRLIB} PUBLIC flann::flann_cpp)
-target_link_libraries(${SPIDRLIB} PUBLIC hdidimensionalityreduction hdiutils hdidata ${CMAKE_DL_LIBS})
+
+if(BUILD_HDILIB)
+	target_link_libraries(${SPIDRLIB} PUBLIC hdidimensionalityreduction hdiutils hdidata ${CMAKE_DL_LIBS})
+else()
+	target_link_libraries(${SPIDRLIB} PUBLIC ${HDI_PREFIX}::hdidimensionalityreduction ${HDI_PREFIX}::hdiutils ${HDI_PREFIX}::hdidata ${CMAKE_DL_LIBS})
+endif()
+
+if(NOT USE_HDILIBSLIM)
+	target_link_libraries(${SPIDRLIB} PUBLIC lz4::lz4)
+	target_link_libraries(${SPIDRLIB} PUBLIC flann::flann_cpp)
+endif()
 
 # -----------------------------------------------------------------------------
 # Target dependency management
