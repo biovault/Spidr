@@ -163,7 +163,7 @@ include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(${AXV_CompileOption} COMPILER_OPT_AVX_SUPPORTED)
 check_cxx_compiler_flag(${AXV2_CompileOption} COMPILER_OPT_AVX2_SUPPORTED)
 
-if(${USE_AVX} 
+if(${USE_AVX})
 	if(${COMPILER_OPT_AVX2_SUPPORTED})
 		MESSAGE( STATUS "Use AXV2")
 		target_compile_options(${SPIDRLIB} PRIVATE ${AXV2_CompileOption})
