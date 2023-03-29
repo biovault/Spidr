@@ -26,3 +26,7 @@
 	path = external/glfw
 	url = https://github.com/glfw/glfw/
 	branch = 3.3-stable
+[submodule "external/HDILibSlim"]
+	path = external/HDILibSlim
+	url = https://github.com/alxvth/HDILibSlim
+	branch = main
