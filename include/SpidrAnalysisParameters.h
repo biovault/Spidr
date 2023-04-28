@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <tuple>
 
+// Use a simple standard logger, e.g. spdlog::info throughout the project
 #include "spdlog/spdlog-inl.h"
 
 /*! Image width and height container */
