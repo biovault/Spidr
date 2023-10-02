@@ -30,7 +30,7 @@ By default, the cmake project creates two targets in addition to the library:
 - See `python_wrapper` for install intructions and an example on how to use the library in python. The example showcases spatially informed t-SNE, UMAP and MDS embeddings. Set cmake option `CREATE_PYTHON_WRAPPER=OFF` to not create this target.
 
 ## Dependencies
-All depedencies are either managed by vcpkg or are submodules of this repo. If you want to build the [HDILib](https://github.com/biovault/HDILib) yourselft, set the cmake option `BUILD_HDILIB=OFF` and provide the variables HDILIB_ROOT, FLANN_ROOT, LZ4_ROOT. See the HDILib documentation for more detail on the HDILib and it's dependencies.
+All dependencies are either managed by vcpkg or are submodules of this repo. If you want to build the [HDILib](https://github.com/biovault/HDILib) yourself, set the cmake option `BUILD_HDILIB=OFF` and provide the variables HDILIB_ROOT, FLANN_ROOT, LZ4_ROOT. See the HDILib documentation for more detail on the HDILib and it's dependencies.
 
 ## References
 This library implements the methods presented in **Incorporating Texture Information into Dimensionality Reduction for High-Dimensional Images** (2022), published at [PacificVis 2022](https://doi.org/10.1109/PacificVis53943.2022.00010). A preprint is available on arXiv [2202.09179](https://arxiv.org/abs/2202.09179), the conference talk recording and other supplemental material are available [here](http://graphics.tudelft.nl/Publications-new/2022/VVLEH22/).

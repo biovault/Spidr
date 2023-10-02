@@ -25,7 +25,7 @@ conda activate ENV_NAME
 
 See `example/example_chamfer.py` and `example/example_multiple.py` for t-SNE, UMAP and MDS examples with a synthetic data set. The dependencies of the examples are listed in `requirements.txt`.
 
-These emebddings are based on the data in  `../../example/data/CheckeredBoxes_2Ch_64_tiff/` and recolor the image based on the emebddings and a 2D colormaps, as done in `example/example_multiple.py`.
+These emebddings are based on the data in  `../../example/data/CheckeredBoxes_2Ch_64_tiff/` and recolor the image based on the embeddings and a 2D colormaps, as done in `example/example_multiple.py`.
 ![Example: embeddings and re-colored data](example/example_multiple_embs.png)
 
 If you are using Anaconda to set up python, be aware of [this error and its solution](https://stackoverflow.com/a/72427700) that you might run into.
