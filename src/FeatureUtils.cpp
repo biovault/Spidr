@@ -5,7 +5,21 @@
 #include <stdexcept>
 #include <random>
 #include <cfloat>       // FLT_MAX
+#include <execution>    // std::par_unseq
 
+template<typename T>
+void NormVector(std::vector<T>& vec, T normVal){
+
+    std::for_each(std::execution::par_unseq, std::begin(vec), std::end(vec), [normVal](auto& val) {
+        val /= normVal;
+    });
+
+}
+template void NormVector<float>(std::vector<float>& vec, float normVal);
+template void NormVector<double>(std::vector<double>& vec, double normVal);
+template void NormVector<int>(std::vector<int>& vec, int normVal);
+template void NormVector<unsigned int>(std::vector<unsigned int>& vec, unsigned int normVal);
+template void NormVector<size_t>(std::vector<size_t>& vec, size_t normVal);
 
 std::vector<unsigned int> PascalsTriangleRow(const size_t n) {
     std::vector<unsigned int> row(n + 1, 1);

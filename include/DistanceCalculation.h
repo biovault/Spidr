@@ -6,10 +6,10 @@
 #include "FeatureUtils.h"
 
 class SpidrParameters;
-enum class knn_library : size_t;
-enum class distance_metric : size_t;
-enum class feature_type : size_t;
-enum class loc_Neigh_Weighting : size_t;
+enum class knn_library : uint32_t;
+enum class distance_metric : uint32_t;
+enum class feature_type : uint32_t;
+enum class loc_Neigh_Weighting : uint32_t;
 
 /*! Support class for SpidrAnalysis, used to compute distances between features
  * 

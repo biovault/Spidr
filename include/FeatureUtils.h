@@ -6,7 +6,7 @@
 #include <tuple>     // std::tuple
 #include <memory>    // std::unique_ptr
 #include <algorithm> // std::for_each
-#include <execution> // std::par_unseq
+
 
 #include "SpidrAnalysisParameters.h"
 #include <Eigen/Dense>
@@ -15,16 +15,10 @@
  * Basically normedVec[i] = vec[i] / normVal
  *
  * \param vec data vector
- * \param normVal nomalization constant
+ * \param normVal normalization constant
  */
 template<typename T>
-void NormVector(std::vector<T>& vec, T normVal){
-
-    std::for_each(std::execution::par_unseq, std::begin(vec), std::end(vec), [normVal](auto& val) {
-        val /= normVal;
-    });
-
-}
+void NormVector(std::vector<T>& vec, T normVal);
 
 /*! compute a row of Pascal's triangle  https://en.wikipedia.org/wiki/Pascal%27s_triangle
  *
@@ -43,7 +37,7 @@ std::vector<float> BinomialKernel2D(const size_t width, norm_vec norm = norm_vec
 
 /*! Compute 1d gaussian kernel
  *
- * \param width width of kernen
+ * \param width width of kernel
  * \param sd standard deviation
  * \return kernel values
  */

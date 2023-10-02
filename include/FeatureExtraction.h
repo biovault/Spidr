@@ -6,8 +6,8 @@
 #include <Eigen/Dense>
 
 class SpidrParameters;
-enum class loc_Neigh_Weighting : size_t;
-enum class feature_type : size_t;
+enum class loc_Neigh_Weighting : uint32_t;
+enum class feature_type : uint32_t;
 
 /*! Support class for SpidrAnalysis, used to extract data features
  * 
@@ -108,7 +108,7 @@ private:
     /*! Calculate Channel histograms
      * Compute one 1D histogram where each bin corresponds to one channel and counts active (above a threshold) values.
      * Note: a bin does therefor not correspond with a value range.
-     * Currently only binary thresholding is implented. That is, values >= 1 are counted. Data has to be thresholded by the user in advance.
+     * Currently only binary thresholding is implemented. That is, values >= 1 are counted. Data has to be thresholded by the user in advance.
      *
      * \param pointInd global ID of point for which to compute the feature
      * \param neighborValues data values of all neighborhood points, serialized like the attribute_data
@@ -138,7 +138,7 @@ private:
     */
     void calculateGearysC(size_t pointInd, std::vector<float> neighborValues, std::vector<int> neighborIDs);
 
-    /*! Multivariate normal distributions feature: covaraince matrix and channel-wise mean
+    /*! Multivariate normal distributions feature: covariance matrix and channel-wise mean
      * 
      * \param pointInd
      * \param neighborValues

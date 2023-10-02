@@ -21,7 +21,7 @@ typedef struct ImgSize {
 /*! kNN algorithm that is used for kNN computations
  * The librarires are extended in order to work with different feature types
  */
-enum class knn_library : size_t
+enum class knn_library : uint32_t
 {
 	KKN_EXACT,              /*!< No aknn library in use, no approximation i.e. exact kNN computation */
 	KNN_HNSW,			    /*!< approximated kNN with HNSWLib */
@@ -31,7 +31,7 @@ enum class knn_library : size_t
 /*! Defines the distance metric
 * add respective entries to logging::distance_metric_name
  */
-enum class distance_metric : size_t
+enum class distance_metric : uint32_t
 {
 	METRIC_QF,       /*!< Quadratic form distance */
 	METRIC_HEL,      /*!< Hellinger distance */
@@ -55,7 +55,7 @@ enum class distance_metric : size_t
  *
  * Adding a new feature type? Make sure to adjust NumFeatureValsPerPoint()
  */
-enum class feature_type : size_t
+enum class feature_type : uint32_t
 {
 	TEXTURE_HIST_1D,    /*!< Histograms of data point neighborhood, vector feature */
 	LOCALMORANSI,       /*!< Local Moran's I (Local Indicator of Spatial Associations), scalar feaure */
@@ -72,7 +72,7 @@ enum class feature_type : size_t
  * get_feat_and_dist(feat_dist) will return the corresponding feature_type and distance_metric
  * when creating a new feat_dist, make sure to update get_feat_and_dist
  */
-enum class feat_dist : size_t
+enum class feat_dist : uint32_t
 {
 	HIST_QF,        /*!< Channel histogram and QF distance */
 	HIST_HEL,       /*!< Channel histogram and Hellinger */
@@ -107,7 +107,7 @@ std::tuple< feature_type, distance_metric> get_feat_and_dist(feat_dist feat_dist
 
 /*! Types of ground distance calculation that are used as the basis for bin similarities
  */
-enum class bin_sim : size_t
+enum class bin_sim : uint32_t
 {
     SIM_EUC,    /*!< 1 - sqrt(Euclidean distance between bins)/(Max dist) */
     SIM_EXP,    /*!< exp(-(Euclidean distance between bins)^2/(Max dist)) */
@@ -115,7 +115,7 @@ enum class bin_sim : size_t
 };
 
 // Heuristic for setting the histogram bin size
-enum class histBinSizeHeuristic : size_t
+enum class histBinSizeHeuristic : uint32_t
 {
 	MANUAL,    /*!< Manually  adjust histogram bin size */
 	SQRT,      /*!< ceil(sqrt(n)), n = neighborhood size */
@@ -127,7 +127,7 @@ enum class histBinSizeHeuristic : size_t
 /*! Weighting of local neighborhoods
  * Used e.g. in histogram creation, spatial weighting in LOCALMORANSI and Point cloud distance
  */
-enum class loc_Neigh_Weighting : size_t
+enum class loc_Neigh_Weighting : uint32_t
 {
 	WEIGHT_UNIF,    /*!< Uniform weighting (all 1) */
 	WEIGHT_BINO,    /*!< Weighting binomial approximation of 2D gaussian */
@@ -136,7 +136,7 @@ enum class loc_Neigh_Weighting : size_t
 
 /*! Normalize to max, sum=1 or none
  */
-enum class norm_vec : size_t
+enum class norm_vec : uint32_t
 {
 	NORM_NONE,  /*!< No normalization */
 	NORM_MAX,   /*!< Normalization such that max = 1 (usually center value) */
@@ -146,7 +146,7 @@ enum class norm_vec : size_t
 /*! Heuristics for determining the Number of histogram bins based on the number of data points
 * https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
  */
-enum class bin_size : size_t
+enum class bin_size : uint32_t
 {
 	MANUAL,     /*!< define manually> */
 	SQRT,       /*!< sqrt(n) > */
