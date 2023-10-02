@@ -11,4 +11,4 @@
  * \param writePath Target path
  */
 template<typename T>
-void writeVecToBinary(std::vector<T> vec, std::string writePath);
+void writeVecToBinary(const std::vector<T>& vec, const std::string& writePath);

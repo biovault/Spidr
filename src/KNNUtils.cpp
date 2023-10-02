@@ -1,4 +1,3 @@
-#pragma once
 #include "KNNUtils.h"
 #include "KNNDists.h"
 #include "FeatureUtils.h"
