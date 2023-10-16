@@ -8,7 +8,7 @@
 #include <string>
 
 class SpidrParameters;
-class GLFWwindow;
+struct GLFWwindow;
 
 /*! Support class for SpidrAnalysis, used to compute a t-SNE embedding
  *

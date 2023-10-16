@@ -9,10 +9,6 @@
 #include "hdi/dimensionality_reduction/tsne_parameters.h"
 #include "hdi/utils/scoped_timers.h"
 
-#ifdef __APPLE__
-#include "glad/glad_3_3.h"
-#define __gl3_h_
-#endif
 #include <GLFW/glfw3.h>
 
 // not present in glfw 3.1.2
@@ -73,7 +69,7 @@ void TsneComputation::setup(const std::vector<int> knn_indices, const std::vecto
         assert(params._has_preset_embedding);
         spdlog::info("TsneComputation::setup: Use user-provided initial embedding");
 
-        _embedding = hdi::data::Embedding<float>(2, _numForegroundPoints);
+        _embedding = hdi::data::Embedding<float>(2, static_cast<unsigned int> (_numForegroundPoints));
         _embedding.getContainer() = initial_embedding;
         _has_inital_emb = params._has_preset_embedding;
     }
