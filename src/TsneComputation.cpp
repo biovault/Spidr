@@ -8,7 +8,9 @@
 
 #include "hdi/dimensionality_reduction/tsne_parameters.h"
 #include "hdi/utils/scoped_timers.h"
-
+#ifdef __APPLE__
+    #include "../external/HDILibSlim/hdi/utils/glad/glad.h"
+#endif
 #include <GLFW/glfw3.h>
 
 // not present in glfw 3.1.2
