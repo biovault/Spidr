@@ -5,12 +5,18 @@
 #include <stdexcept>
 #include <random>
 #include <cfloat>       // FLT_MAX
+#if defined(__cpp_lib_parallel_algorithm)
 #include <execution>    // std::par_unseq
+#endif
 
 template<typename T>
 void NormVector(std::vector<T>& vec, T normVal){
 
+#if defined(__cpp_lib_parallel_algorithm)
     std::for_each(std::execution::par_unseq, std::begin(vec), std::end(vec), [normVal](auto& val) {
+#else
+    std::for_each(std::begin(vec), std::end(vec), [normVal](auto & val) {
+#endif
         val /= normVal;
     });
 
