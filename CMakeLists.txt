@@ -21,7 +21,11 @@ endif(MSVC)
 
 # find external packages
 find_package(OpenGL REQUIRED)
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
+
+if(UNIX AND NOT APPLE)
+   find_package(TBB REQUIRED)
+endif()
 
 set(HDILib_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILibSlim")
 message(STATUS "Build HDILibSlim from submodule at ${HDILib_DIR}")
@@ -89,7 +93,7 @@ if(UNIX)
     set_target_properties(${SPIDRLIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-# Hardware accelations: AVX
+# Hardware accelerations: AVX
 check_and_link_AVX(${SPIDRLIB} ${USE_AVX})
 
 if(MSVC)
@@ -124,12 +128,13 @@ target_include_directories(${SPIDRLIB} PUBLIC "external/glfw/include")
 # Target library linking
 # -----------------------------------------------------------------------------
 target_link_libraries(${SPIDRLIB} PUBLIC glfw)
-
-if(USE_OPENMP AND OpenMP_CXX_FOUND)
-	target_link_libraries(${SPIDRLIB} PUBLIC OpenMP::OpenMP_CXX)
-endif()
+target_link_libraries(${SPIDRLIB} PUBLIC OpenMP::OpenMP_CXX)
 
 target_link_libraries(${SPIDRLIB} PUBLIC hdidimensionalityreduction hdiutils hdidata)
+
+if(UNIX AND NOT APPLE)
+   target_link_libraries(${SPIDRLIB} PRIVATE TBB::tbb)
+endif()
 
 # -----------------------------------------------------------------------------
 # Target dependency management
