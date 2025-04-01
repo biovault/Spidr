@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.24)
 
 option(CREATE_EXAMPLE "Creates an example executable using the Spidr library" ON)
 option(CREATE_PYTHON_WRAPPER "Creates a python wrapper of the Spidr library" ON)
@@ -16,6 +16,7 @@ if(MSVC)
 endif(MSVC)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCheckSetAVXSpidr.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeFetchUtils.cmake)
 
 # -----------------------------------------------------------------------------
 # Library dependencies
@@ -28,6 +29,13 @@ find_package(OpenMP REQUIRED)
 if(UNIX AND NOT APPLE)
    find_package(TBB REQUIRED)
 endif()
+
+set(BUILD_TESTING OFF CACHE BOOL "Enable testing for Eigen" FORCE)
+set(EIGEN_BUILD_TESTING  OFF CACHE BOOL "Enable creation of Eigen tests." FORCE)
+set(EIGEN_BUILD_DOC OFF CACHE BOOL "Enable creation of Eigen documentation" FORCE)
+set(EIGEN_BUILD_DEMOS OFF CACHE BOOL "Toggles the building of the Eigen demos" FORCE)
+fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/3866cbfbe8622f41b4f9fa17227aaa7a8de13890/eigen-3866cbfbe8622f41b4f9fa17227aaa7a8de13890.tar.gz") # master as of 26/03/25
+set_target_properties(eigen PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdislimdata)
     if(NOT HDILibSlim_LINK_LIBS)
@@ -45,6 +53,9 @@ else()
     add_subdirectory(${HDILibSlim_DIR})
     set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_DIR})
     set(HDILibSlim_LINK_LIBS hdislimdimensionalityreduction hdislimutils hdislimdata)
+    set_target_properties(hdislimdimensionalityreduction PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    set_target_properties(hdislimutils PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    set_target_properties(hdislimdata PROPERTIES EXCLUDE_FROM_ALL TRUE)
     if(UNIX)
         set_target_properties(hdislimdimensionalityreduction PROPERTIES POSITION_INDEPENDENT_CODE ON)
         set_target_properties(hdislimutils PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -133,8 +144,8 @@ target_include_directories(${SPIDRLIB} PUBLIC "include")
 
 # Include external header-only libraries
 target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_INCLUDE_DIR}")
+target_include_directories(${SPIDRLIB} PUBLIC "${eigen_SOURCE_DIR}")
 target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
-target_include_directories(${SPIDRLIB} PUBLIC "external/eigen/")
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
 
 if(SPIDR_LOCAL_GLFW3)
