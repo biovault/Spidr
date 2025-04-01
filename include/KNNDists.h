@@ -993,8 +993,8 @@ namespace hnswlib {
 
     inline float LogDetReduced(const SVD& svd, const Eigen::MatrixXf& mat, std::vector<int> activeD) {
 
-        Eigen::MatrixXf Ut = svd.u(Eigen::all, activeD).transpose();
-        Eigen::MatrixXf V = svd.v(Eigen::all, activeD);
+        Eigen::MatrixXf Ut = svd.u(Eigen::placeholders::all, activeD).transpose();
+        Eigen::MatrixXf V = svd.v(Eigen::placeholders::all, activeD);
 
         Eigen::MatrixXf reduced = Ut * mat * V;
         float det = reduced.determinant();
@@ -1046,7 +1046,7 @@ namespace hnswlib {
             std::set_difference(allIds.begin(), allIds.end(), activeDIds.begin(), activeDIds.end(),
                 std::inserter(inactiveDIds, activeDIds.begin()));
 
-            Eigen::VectorXf checkSpan = c_svd.u(Eigen::all, inactiveDIds).transpose() * mean_diff;
+            Eigen::VectorXf checkSpan = c_svd.u(Eigen::placeholders::all, inactiveDIds).transpose() * mean_diff;
 
             if (std::any_of(checkSpan.begin(), checkSpan.end(), [](auto& val) { return val != 0; }))
             {
@@ -1060,8 +1060,8 @@ namespace hnswlib {
         Eigen::MatrixXf inverse_activeDs_diag = inverse_activeDs.asDiagonal();
         Eigen::MatrixXf inverse_activeDs_diag2 = inverse_activeDs.asDiagonal().toDenseMatrix();
 
-        Eigen::MatrixXf activeV = c_svd.v(Eigen::all, activeDIds);
-        Eigen::MatrixXf activeU = c_svd.u(Eigen::all, activeDIds);
+        Eigen::MatrixXf activeV = c_svd.v(Eigen::placeholders::all, activeDIds);
+        Eigen::MatrixXf activeU = c_svd.u(Eigen::placeholders::all, activeDIds);
 
         Eigen::VectorXf maha = activeV * inverse_activeDs_diag * activeU.transpose() * mean_diff;
 
