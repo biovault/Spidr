@@ -46,21 +46,23 @@ if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdis
         set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
     endif()
 else()
-    set(HDILibSlim_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILibSlim")
-    message(STATUS "Build HDILibSlim from submodule at ${HDILibSlim_DIR}")
-    set(HDILibSlim_INSTALL OFF)
-    set(HDILibSlim_ENABLE_AVX ON)
-    add_subdirectory(${HDILibSlim_DIR})
-    set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_DIR})
-    set(HDILibSlim_LINK_LIBS hdislimdimensionalityreduction hdislimutils hdislimdata)
-    set_target_properties(hdislimdimensionalityreduction PROPERTIES EXCLUDE_FROM_ALL TRUE)
-    set_target_properties(hdislimutils PROPERTIES EXCLUDE_FROM_ALL TRUE)
-    set_target_properties(hdislimdata PROPERTIES EXCLUDE_FROM_ALL TRUE)
-    if(UNIX)
-        set_target_properties(hdislimdimensionalityreduction PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        set_target_properties(hdislimutils PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        set_target_properties(hdislimdata PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    endif()
+    CPMAddPackage(
+     NAME              HDILibSlim
+     GIT_REPOSITORY    https://github.com/alxvth/HDILibSlim.git
+     GIT_TAG           0d3c20098cc616fd18b80ddfda68aac593d1d604
+     EXCLUDE_FROM_ALL  YES
+     OPTIONS "HDILibSlim_INSTALL OFF"
+             "HDILibSlim_ENABLE_AVX ${SPIDR_USE_AVX}"
+             "HDILibSlim_ENABLE_PID ON"
+             "HDILibSlim_OPTIMIZATION_LEVEL 2"
+    )
+
+    message(STATUS "HDILibSlim_SOURCE_DIR: ${HDILibSlim_SOURCE_DIR}")
+
+    set_target_properties(hdislimdata hdislimdimensionalityreduction hdislimutils
+        PROPERTIES 
+        FOLDER HDILibSlim
+    )
 endif()
 
 find_package(glfw3 CONFIG)
