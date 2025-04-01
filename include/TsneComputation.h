@@ -97,9 +97,10 @@ private:
 
 private:
     // TSNE structures
-    hdi::dr::HDJointProbabilityGenerator<float>::sparse_scalar_matrix_type _probabilityDistribution;    /*!< Generator for a joint probability distribution that describes similarities in the high dimensional data > */
-    hdi::dr::GradientDescentTSNETexture _GPGPU_tSNE;                                                    /*!< Main gpu based t-sne computation class> */
-    hdi::data::Embedding<float> _embedding;                                                             /*!< Container for the embedding > */
+    using HsneMatrix = hdi::dr::HDJointProbabilityGenerator<float>::sparse_scalar_matrix_type;
+    HsneMatrix _probabilityDistribution;                                    /*!< Generator for a joint probability distribution that describes similarities in the high dimensional data > */
+    hdi::dr::GradientDescentTSNETexture<HsneMatrix> _GPGPU_tSNE;            /*!< Main gpu based t-sne computation class> */
+    hdi::data::Embedding<float> _embedding;                                 /*!< Container for the embedding > */
 
     // Data
     std::vector<int> _knn_indices;              /*!< knn indices, global IDs, serialized> */
