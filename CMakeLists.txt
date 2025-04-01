@@ -17,6 +17,7 @@ endif(MSVC)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCheckSetAVXSpidr.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeFetchUtils.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_cpm.cmake)
 
 # -----------------------------------------------------------------------------
 # Library dependencies
