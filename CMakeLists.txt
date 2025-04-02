@@ -8,6 +8,10 @@ option(SPIDR_USE_AVX "Use AVX instructions sets if available" ON)
 set(SPIDRLIB "SpidrLib")
 PROJECT(${SPIDRLIB} C CXX)
 
+# -----------------------------------------------------------------------------
+# CMake Options
+# -----------------------------------------------------------------------------
+
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /permissive- /Zc:__cplusplus")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
@@ -15,9 +19,11 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 endif(MSVC)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCheckSetAVXSpidr.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeFetchUtils.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_cpm.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(CMakeCheckSetAVXSpidr)
+include(CMakeFetchUtils)
+include(get_cpm)
 
 # -----------------------------------------------------------------------------
 # Library dependencies
@@ -31,12 +37,13 @@ if(UNIX AND NOT APPLE)
    find_package(TBB REQUIRED)
 endif()
 
-set(BUILD_TESTING OFF CACHE BOOL "Enable testing for Eigen" FORCE)
-set(EIGEN_BUILD_TESTING  OFF CACHE BOOL "Enable creation of Eigen tests." FORCE)
-set(EIGEN_BUILD_DOC OFF CACHE BOOL "Enable creation of Eigen documentation" FORCE)
-set(EIGEN_BUILD_DEMOS OFF CACHE BOOL "Toggles the building of the Eigen demos" FORCE)
-fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/3866cbfbe8622f41b4f9fa17227aaa7a8de13890/eigen-3866cbfbe8622f41b4f9fa17227aaa7a8de13890.tar.gz") # master as of 26/03/25
-set_target_properties(eigen PROPERTIES EXCLUDE_FROM_ALL TRUE)
+if(NOT eigen_SOURCE_DIR)
+    set(BUILD_TESTING OFF CACHE BOOL "Enable testing for Eigen" FORCE)
+    set(EIGEN_BUILD_TESTING  OFF CACHE BOOL "Enable creation of Eigen tests." FORCE)
+    set(EIGEN_BUILD_DOC OFF CACHE BOOL "Enable creation of Eigen documentation" FORCE)
+    set(EIGEN_BUILD_DEMOS OFF CACHE BOOL "Toggles the building of the Eigen demos" FORCE)
+    fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/3866cbfbe8622f41b4f9fa17227aaa7a8de13890/eigen-3866cbfbe8622f41b4f9fa17227aaa7a8de13890.tar.gz") # master as of 26/03/25
+endif()
 
 if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdislimdata)
     if(NOT HDILibSlim_LINK_LIBS)
@@ -47,15 +54,20 @@ if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdis
         set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
     endif()
 else()
+    set(HDILibSlim_INSTALL OFF)
+    set(HDILibSlim_ENABLE_AVX ${SPIDR_USE_AVX})
+    set(HDILibSlim_ENABLE_PID ON)
+    set(HDILibSlim_OPTIMIZATION_LEVEL 2)
+
     CPMAddPackage(
      NAME              HDILibSlim
      GIT_REPOSITORY    https://github.com/alxvth/HDILibSlim.git
-     GIT_TAG           7e82fe05d57b9a18fe5f5dbeedddb20e8e827668
+     GIT_TAG           b32f327958a250e65298904592b96e0cda6ff41e
      EXCLUDE_FROM_ALL  YES
-     OPTIONS "HDILibSlim_INSTALL OFF"
-             "HDILibSlim_ENABLE_AVX ${SPIDR_USE_AVX}"
-             "HDILibSlim_ENABLE_PID ON"
-             "HDILibSlim_OPTIMIZATION_LEVEL 2"
+     OPTIONS "HDILibSlim_INSTALL ${HDILibSlim_INSTALL}"
+             "HDILibSlim_ENABLE_AVX ${HDILibSlim_ENABLE_AVX}"
+             "HDILibSlim_ENABLE_PID ${HDILibSlim_ENABLE_PID}"
+             "HDILibSlim_OPTIMIZATION_LEVEL ${HDILibSlim_OPTIMIZATION_LEVEL}"
     )
 
     message(STATUS "HDILibSlim_SOURCE_DIR: ${HDILibSlim_SOURCE_DIR}")
