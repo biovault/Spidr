@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.24)
 
 option(CREATE_EXAMPLE "Creates an example executable using the Spidr library" ON)
 option(CREATE_PYTHON_WRAPPER "Creates a python wrapper of the Spidr library" ON)
@@ -8,6 +8,10 @@ option(SPIDR_USE_AVX "Use AVX instructions sets if available" ON)
 set(SPIDRLIB "SpidrLib")
 PROJECT(${SPIDRLIB} C CXX)
 
+# -----------------------------------------------------------------------------
+# CMake Options
+# -----------------------------------------------------------------------------
+
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /permissive- /Zc:__cplusplus")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
@@ -15,7 +19,11 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 endif(MSVC)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCheckSetAVXSpidr.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(CMakeCheckSetAVXSpidr)
+include(CMakeFetchUtils)
+include(get_cpm)
 
 # -----------------------------------------------------------------------------
 # Library dependencies
@@ -29,6 +37,14 @@ if(UNIX AND NOT APPLE)
    find_package(TBB REQUIRED)
 endif()
 
+if(NOT eigen_SOURCE_DIR)
+    set(BUILD_TESTING OFF CACHE BOOL "Enable testing for Eigen" FORCE)
+    set(EIGEN_BUILD_TESTING  OFF CACHE BOOL "Enable creation of Eigen tests." FORCE)
+    set(EIGEN_BUILD_DOC OFF CACHE BOOL "Enable creation of Eigen documentation" FORCE)
+    set(EIGEN_BUILD_DEMOS OFF CACHE BOOL "Toggles the building of the Eigen demos" FORCE)
+    fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/3866cbfbe8622f41b4f9fa17227aaa7a8de13890/eigen-3866cbfbe8622f41b4f9fa17227aaa7a8de13890.tar.gz") # master as of 26/03/25
+endif()
+
 if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdislimdata)
     if(NOT HDILibSlim_LINK_LIBS)
         set(HDILibSlim_LINK_LIBS hdislimdimensionalityreduction hdislimutils hdislimdata)
@@ -38,18 +54,31 @@ if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdis
         set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
     endif()
 else()
-    set(HDILibSlim_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/HDILibSlim")
-    message(STATUS "Build HDILibSlim from submodule at ${HDILibSlim_DIR}")
     set(HDILibSlim_INSTALL OFF)
-    set(HDILibSlim_ENABLE_AVX ON)
-    add_subdirectory(${HDILibSlim_DIR})
-    set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_DIR})
+    set(HDILibSlim_ENABLE_AVX ${SPIDR_USE_AVX})
+    set(HDILibSlim_ENABLE_PID ON)
+    set(HDILibSlim_OPTIMIZATION_LEVEL 2)
+
+    CPMAddPackage(
+     NAME              HDILibSlim
+     GIT_REPOSITORY    https://github.com/alxvth/HDILibSlim.git
+     GIT_TAG           8eb510528dc4169079fa97cb324c13b54d060ec4
+     EXCLUDE_FROM_ALL  YES
+     OPTIONS "HDILibSlim_INSTALL ${HDILibSlim_INSTALL}"
+             "HDILibSlim_ENABLE_AVX ${HDILibSlim_ENABLE_AVX}"
+             "HDILibSlim_ENABLE_PID ${HDILibSlim_ENABLE_PID}"
+             "HDILibSlim_OPTIMIZATION_LEVEL ${HDILibSlim_OPTIMIZATION_LEVEL}"
+    )
+    
+    set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
     set(HDILibSlim_LINK_LIBS hdislimdimensionalityreduction hdislimutils hdislimdata)
-    if(UNIX)
-        set_target_properties(hdislimdimensionalityreduction PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        set_target_properties(hdislimutils PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        set_target_properties(hdislimdata PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    endif()
+    
+    message(STATUS "HDILibSlim_SOURCE_DIR: ${HDILibSlim_SOURCE_DIR}")
+
+    set_target_properties(hdislimdata hdislimdimensionalityreduction hdislimutils
+        PROPERTIES 
+        FOLDER HDILibSlim
+    )
 endif()
 
 find_package(glfw3 CONFIG)
@@ -64,7 +93,7 @@ if(NOT glfw3_FOUND)
     set(GLFW_BUILD_TESTS OFF CACHE BOOL "disable GLFX tests") 
     set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
     set(SPIDR_LOCAL_GLFW3 ON)
-    message(STATUS "SOMEHIT:IUWRSB")
+    message(STATUS "Use local glfw copy")
     add_subdirectory("external/glfw")
 endif()
 
@@ -132,9 +161,9 @@ spidr_check_and_set_AVX(${SPIDRLIB} ${SPIDR_USE_AVX})
 target_include_directories(${SPIDRLIB} PUBLIC "include")
 
 # Include external header-only libraries
-target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_INCLUDE_DIR}")
+target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_SOURCE_DIR}")
+target_include_directories(${SPIDRLIB} PUBLIC "${eigen_SOURCE_DIR}")
 target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
-target_include_directories(${SPIDRLIB} PUBLIC "external/eigen/")
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
 
 if(SPIDR_LOCAL_GLFW3)
