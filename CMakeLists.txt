@@ -50,7 +50,7 @@ else()
     CPMAddPackage(
      NAME              HDILibSlim
      GIT_REPOSITORY    https://github.com/alxvth/HDILibSlim.git
-     GIT_TAG           0d3c20098cc616fd18b80ddfda68aac593d1d604
+     GIT_TAG           7e82fe05d57b9a18fe5f5dbeedddb20e8e827668
      EXCLUDE_FROM_ALL  YES
      OPTIONS "HDILibSlim_INSTALL OFF"
              "HDILibSlim_ENABLE_AVX ${SPIDR_USE_AVX}"
@@ -78,7 +78,7 @@ if(NOT glfw3_FOUND)
     set(GLFW_BUILD_TESTS OFF CACHE BOOL "disable GLFX tests") 
     set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only" )
     set(SPIDR_LOCAL_GLFW3 ON)
-    message(STATUS "SOMEHIT:IUWRSB")
+    message(STATUS "Use local glfw copy")
     add_subdirectory("external/glfw")
 endif()
 
