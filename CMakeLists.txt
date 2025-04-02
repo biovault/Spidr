@@ -71,6 +71,8 @@ else()
     )
     
     set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
+    set(HDILibSlim_LINK_LIBS hdislimdimensionalityreduction hdislimutils hdislimdata)
+    
     message(STATUS "HDILibSlim_SOURCE_DIR: ${HDILibSlim_SOURCE_DIR}")
 
     set_target_properties(hdislimdata hdislimdimensionalityreduction hdislimutils
