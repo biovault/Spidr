@@ -62,7 +62,7 @@ else()
     CPMAddPackage(
      NAME              HDILibSlim
      GIT_REPOSITORY    https://github.com/alxvth/HDILibSlim.git
-     GIT_TAG           bca4560e4b98e8b13ce5d0df57c6c622221a52a4
+     GIT_TAG           8eb510528dc4169079fa97cb324c13b54d060ec4
      EXCLUDE_FROM_ALL  YES
      OPTIONS "HDILibSlim_INSTALL ${HDILibSlim_INSTALL}"
              "HDILibSlim_ENABLE_AVX ${HDILibSlim_ENABLE_AVX}"
