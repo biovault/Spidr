@@ -69,7 +69,8 @@ else()
              "HDILibSlim_ENABLE_PID ${HDILibSlim_ENABLE_PID}"
              "HDILibSlim_OPTIMIZATION_LEVEL ${HDILibSlim_OPTIMIZATION_LEVEL}"
     )
-
+    
+    set(HDILibSlim_INCLUDE_DIR ${HDILibSlim_SOURCE_DIR})
     message(STATUS "HDILibSlim_SOURCE_DIR: ${HDILibSlim_SOURCE_DIR}")
 
     set_target_properties(hdislimdata hdislimdimensionalityreduction hdislimutils
@@ -158,7 +159,7 @@ spidr_check_and_set_AVX(${SPIDRLIB} ${SPIDR_USE_AVX})
 target_include_directories(${SPIDRLIB} PUBLIC "include")
 
 # Include external header-only libraries
-target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_INCLUDE_DIR}")
+target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_SOURCE_DIR}")
 target_include_directories(${SPIDRLIB} PUBLIC "${eigen_SOURCE_DIR}")
 target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
