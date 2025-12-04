@@ -37,12 +37,15 @@ if(UNIX AND NOT APPLE)
    find_package(TBB REQUIRED)
 endif()
 
-if(NOT eigen_SOURCE_DIR)
+find_package(Eigen3 CONFIG)
+if(NOT eigen_SOURCE_DIR AND NOT TARGET Eigen3::Eigen AND NOT Eigen3_FOUND)
     set(BUILD_TESTING OFF CACHE BOOL "Enable testing for Eigen" FORCE)
     set(EIGEN_BUILD_TESTING  OFF CACHE BOOL "Enable creation of Eigen tests." FORCE)
     set(EIGEN_BUILD_DOC OFF CACHE BOOL "Enable creation of Eigen documentation" FORCE)
     set(EIGEN_BUILD_DEMOS OFF CACHE BOOL "Toggles the building of the Eigen demos" FORCE)
-    fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/3866cbfbe8622f41b4f9fa17227aaa7a8de13890/eigen-3866cbfbe8622f41b4f9fa17227aaa7a8de13890.tar.gz") # master as of 26/03/25
+    fetch_content_url(eigen "https://gitlab.com/libeigen/eigen/-/archive/5.0.1.tar.gz")
+else()
+    message(STATUS "Spidr: Use external Eigen")
 endif()
 
 if(TARGET hdislimdimensionalityreduction AND TARGET hdislimutils AND TARGET hdislimdata)
@@ -162,7 +165,6 @@ target_include_directories(${SPIDRLIB} PUBLIC "include")
 
 # Include external header-only libraries
 target_include_directories(${SPIDRLIB} PUBLIC "${HDILibSlim_SOURCE_DIR}")
-target_include_directories(${SPIDRLIB} PUBLIC "${eigen_SOURCE_DIR}")
 target_include_directories(${SPIDRLIB} PUBLIC "external/spdlog/include")
 target_include_directories(${SPIDRLIB} PUBLIC "external/hnswlib")
 
@@ -177,6 +179,7 @@ target_link_libraries(${SPIDRLIB} PUBLIC glfw)
 target_link_libraries(${SPIDRLIB} PUBLIC OpenMP::OpenMP_CXX)
 target_link_libraries(${SPIDRLIB} PUBLIC ${OPENGL_LIBRARIES})
 target_link_libraries(${SPIDRLIB} PUBLIC ${HDILibSlim_LINK_LIBS})
+target_link_libraries(${SPIDRLIB} PUBLIC Eigen3::Eigen)
 
 if(UNIX AND NOT APPLE)
    target_link_libraries(${SPIDRLIB} PRIVATE TBB::tbb)
